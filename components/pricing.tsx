@@ -39,7 +39,7 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section id="inversion" className="relative overflow-hidden py-14 md:py-20">
+    <section id="inversion" className="relative overflow-hidden py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 text-center">
           <span className="mb-3 inline-block rounded-full bg-secondary/15 px-4 py-1.5 text-sm font-medium text-[#c27868]">

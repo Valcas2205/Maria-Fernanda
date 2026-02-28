@@ -4,7 +4,7 @@ export function CTA() {
   return (
     <section
       id="agendar"
-      className="relative overflow-hidden py-14 md:py-20"
+      className="relative overflow-hidden py-16 md:py-24"
     >
       <div className="mx-auto max-w-3xl px-6 text-center">
         <h2 className="mb-4 font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">

@@ -38,7 +38,7 @@ const areas = [
 
 export function Areas() {
   return (
-    <section id="areas" className="relative overflow-hidden py-14 md:py-20">
+    <section id="areas" className="relative overflow-hidden py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 text-center">
           <span className="mb-3 inline-block rounded-full bg-accent/15 px-4 py-1.5 text-sm font-medium text-accent">

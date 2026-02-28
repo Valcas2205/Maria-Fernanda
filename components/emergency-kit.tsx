@@ -7,7 +7,7 @@ export function EmergencyKit() {
   const [email, setEmail] = useState("")
 
   return (
-    <section className="relative overflow-hidden py-14 md:py-20">
+    <section className="relative overflow-hidden py-16 md:py-24">
       <div className="mx-auto max-w-2xl px-6">
         <div className="overflow-hidden rounded-3xl bg-card p-8 shadow-lg md:p-10">
           <div className="relative z-10 text-center">

@@ -44,6 +44,26 @@ const testimonials = [
       "La terapia online me dio la flexibilidad que necesitaba sin perder la calidad del acompanamiento. 100% recomendable.",
     author: "Marco R.",
   },
+  {
+    quote:
+      "Me ayudo a sanar heridas que no sabia que seguian abiertas. Hoy me siento mas liviana y en paz conmigo misma.",
+    author: "Isabella F.",
+  },
+  {
+    quote:
+      "El enfoque de Maria Fernanda es muy humano y profesional. Cada sesion me daba herramientas concretas para mi dia a dia.",
+    author: "Andres V.",
+  },
+  {
+    quote:
+      "Logre reconectar con mi pareja despues de meses de distancia emocional. Estoy profundamente agradecida por el proceso.",
+    author: "Patricia y Luis",
+  },
+  {
+    quote:
+      "Empece la terapia con muchas dudas y hoy puedo decir que fue la mejor decision que he tomado en mucho tiempo.",
+    author: "Gabriela S.",
+  },
 ]
 
 export function Testimonials() {
@@ -65,24 +85,33 @@ export function Testimonials() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const maxIndex = Math.max(0, testimonials.length - slidesPerView)
+  const totalPages = Math.ceil(testimonials.length / slidesPerView)
 
   const goNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
-  }, [maxIndex])
+    setCurrentIndex((prev) => (prev + 1) % totalPages)
+  }, [totalPages])
 
   const goPrev = useCallback(() => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1))
-  }, [maxIndex])
+    setCurrentIndex((prev) => (prev - 1 + totalPages) % totalPages)
+  }, [totalPages])
 
   // Auto-play
   useEffect(() => {
-    const timer = setInterval(goNext, 5000)
+    const timer = setInterval(goNext, 6000)
     return () => clearInterval(timer)
   }, [goNext])
 
+  // Get current visible testimonials
+  const startIdx = currentIndex * slidesPerView
+  const visibleTestimonials = testimonials.slice(startIdx, startIdx + slidesPerView)
+
+  // Pad if last page has fewer cards
+  while (visibleTestimonials.length < slidesPerView) {
+    visibleTestimonials.push(testimonials[visibleTestimonials.length % testimonials.length])
+  }
+
   return (
-    <section className="relative overflow-hidden py-14 md:py-20">
+    <section className="relative overflow-hidden py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 text-center">
           <span className="mb-3 inline-block rounded-full bg-primary/15 px-4 py-1.5 text-sm font-medium text-primary">
@@ -93,66 +122,57 @@ export function Testimonials() {
           </h2>
         </div>
 
-        {/* Slider */}
+        {/* Slider container */}
         <div className="relative">
           {/* Navigation arrows */}
           <button
             onClick={goPrev}
-            className="absolute -left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground/60 shadow-md transition-colors hover:text-primary md:-left-5"
+            className="absolute -left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground/60 shadow-md transition-colors hover:text-primary md:-left-5"
             aria-label="Anterior testimonio"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             onClick={goNext}
-            className="absolute -right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground/60 shadow-md transition-colors hover:text-primary md:-right-5"
+            className="absolute -right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-card text-foreground/60 shadow-md transition-colors hover:text-primary md:-right-5"
             aria-label="Siguiente testimonio"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
 
-          <div className="overflow-hidden px-2">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{
-                transform: `translateX(-${currentIndex * (100 / slidesPerView)}%)`,
-              }}
-            >
-              {testimonials.map((t, i) => (
-                <div
-                  key={i}
-                  className="flex-shrink-0 px-3"
-                  style={{ width: `${100 / slidesPerView}%` }}
-                >
-                  <div className="flex h-full flex-col gap-5 rounded-3xl bg-card p-7 shadow-sm">
-                    <Quote className="h-7 w-7 text-primary/30" />
-                    <p className="flex-1 text-sm leading-relaxed text-card-foreground/80 italic">
-                      {`"${t.quote}"`}
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-primary/15" />
-                      <span className="text-sm font-semibold text-card-foreground">
-                        {t.author}
-                      </span>
-                    </div>
-                  </div>
+          {/* Cards grid - always shows 3 (or 2/1 on smaller screens) */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {visibleTestimonials.map((t, i) => (
+              <div
+                key={`${currentIndex}-${i}`}
+                className="flex h-full flex-col gap-5 rounded-3xl bg-card p-7 shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-right-4"
+              >
+                <Quote className="h-7 w-7 flex-shrink-0 text-primary/30" />
+                <p className="flex-1 text-sm leading-relaxed text-card-foreground/80 italic">
+                  {`"${t.quote}"`}
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 flex-shrink-0 rounded-full bg-primary/15" />
+                  <span className="text-sm font-semibold text-card-foreground">
+                    {t.author}
+                  </span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
 
-          {/* Dots indicator */}
-          <div className="mt-6 flex justify-center gap-2">
-            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+          {/* Page dots */}
+          <div className="mt-8 flex items-center justify-center gap-2">
+            {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentIndex(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${
+                className={`h-2.5 rounded-full transition-all duration-300 ${
                   i === currentIndex
-                    ? "w-6 bg-primary"
-                    : "w-2 bg-primary/25"
+                    ? "w-7 bg-primary"
+                    : "w-2.5 bg-primary/25 hover:bg-primary/40"
                 }`}
-                aria-label={`Ir a testimonio ${i + 1}`}
+                aria-label={`Ir a pagina ${i + 1}`}
               />
             ))}
           </div>

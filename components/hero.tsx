@@ -5,7 +5,7 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative flex min-h-[85vh] items-center overflow-hidden pt-20"
+      className="relative flex min-h-[90vh] items-center overflow-hidden pt-24"
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-10 px-6 md:flex-row md:gap-14">
         {/* Text block */}
