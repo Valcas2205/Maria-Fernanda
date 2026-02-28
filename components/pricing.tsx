@@ -39,11 +39,9 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section id="inversion" className="relative overflow-hidden py-24 md:py-32">
-      <div className="pointer-events-none absolute -left-32 bottom-0 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
-
+    <section id="inversion" className="relative overflow-hidden py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-16 text-center">
+        <div className="mb-10 text-center">
           <span className="mb-3 inline-block rounded-full bg-secondary/15 px-4 py-1.5 text-sm font-medium text-[#c27868]">
             Tarifas
           </span>
@@ -52,11 +50,11 @@ export function Pricing() {
           </h2>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3">
           {plans.map((plan) => (
             <div
               key={`${plan.title}-${plan.subtitle}`}
-              className={`relative flex flex-col rounded-3xl p-8 shadow-sm transition-shadow hover:shadow-lg ${
+              className={`relative flex flex-col rounded-3xl p-7 shadow-sm transition-shadow hover:shadow-lg ${
                 plan.highlighted
                   ? "bg-primary text-primary-foreground"
                   : "bg-card text-card-foreground"
@@ -77,9 +75,9 @@ export function Pricing() {
                 {plan.subtitle}
               </p>
 
-              <p className="mt-6 font-serif text-3xl font-light">{plan.price}</p>
+              <p className="mt-5 font-serif text-3xl font-light">{plan.price}</p>
 
-              <ul className="mt-8 flex flex-1 flex-col gap-3">
+              <ul className="mt-6 flex flex-1 flex-col gap-3">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-3 text-sm">
                     <Check
@@ -100,7 +98,7 @@ export function Pricing() {
 
               <Link
                 href="#agendar"
-                className={`mt-8 block rounded-full py-3 text-center text-sm font-semibold transition-opacity hover:opacity-90 ${
+                className={`mt-6 block rounded-full py-3 text-center text-sm font-semibold transition-opacity hover:opacity-90 ${
                   plan.highlighted
                     ? "bg-card text-primary"
                     : "bg-primary text-primary-foreground"

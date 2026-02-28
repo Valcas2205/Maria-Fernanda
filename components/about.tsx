@@ -21,79 +21,69 @@ const credentials = [
 
 export function About() {
   return (
-    <section id="sobre-mi" className="relative overflow-hidden py-24 md:py-32">
-      {/* Decorative blobs */}
-      <div className="pointer-events-none absolute top-10 right-0 h-72 w-72 rounded-full bg-secondary/15 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-10 -left-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
-
+    <section id="sobre-mi" className="relative overflow-hidden py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-6">
-        {/* Section label */}
-        <div className="mb-16 text-center">
-          <span className="mb-3 inline-block rounded-full bg-primary/15 px-4 py-1.5 text-sm font-medium text-primary">
-            El Origen
-          </span>
-          <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">
-            Sobre mi
-          </h2>
-        </div>
+        {/* Name heading */}
+        <h2 className="mb-10 font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl">
+          Psic. Maria Fernanda Azcunes
+        </h2>
 
-        <div className="flex flex-col items-center gap-12 md:flex-row md:gap-16">
-          {/* Image */}
+        <div className="flex flex-col gap-10 md:flex-row md:gap-14">
+          {/* Image - left column */}
           <div className="relative flex-shrink-0">
-            <div className="overflow-hidden rounded-[2rem] shadow-xl shadow-secondary/10">
+            <div className="overflow-hidden rounded-[2rem]">
               <Image
-                src="/images/about-sofa.jpg"
-                alt="Maria Fernanda Azcunes"
-                width={380}
-                height={480}
-                className="h-auto w-[300px] object-cover md:w-[380px]"
+                src="/images/hero-diplomas.jpg"
+                alt="Maria Fernanda Azcunes con sus titulos profesionales"
+                width={400}
+                height={520}
+                className="h-auto w-full max-w-[400px] object-cover"
               />
             </div>
-            <div className="absolute -bottom-4 -right-4 -z-10 h-full w-full rounded-[2rem] bg-secondary/20" />
           </div>
 
-          {/* Text */}
-          <div className="flex flex-1 flex-col gap-6">
-            <p className="text-lg leading-relaxed text-foreground/80">
-              <span className="font-serif text-xl italic text-primary">Todo es un balance</span>{" "}
-              nacio en 2020 como un blog psicoeducativo, con la idea de acercar la psicologia a las personas de forma cercana y comprensible.
-            </p>
-            <p className="text-lg leading-relaxed text-foreground/80">
-              Hoy es mi proposito de vida: ayudarte a conocerte mejor, a mejorar la relacion contigo mismo y a construir un bienestar que sea sostenible y real.
-            </p>
-            <p className="text-base leading-relaxed text-muted-foreground">
-              Creo profundamente en que la terapia es un acto de valentia, y me siento honrada cada vez que alguien me permite acompanarle en su proceso.
-            </p>
-          </div>
-        </div>
+          {/* Text + Credentials - right column */}
+          <div className="flex flex-1 flex-col gap-8">
+            <div className="flex flex-col gap-5">
+              <p className="text-lg leading-relaxed text-foreground/80">
+                Todo comenzo en 2020, cuando este proyecto nacio como un blog psicoeducativo. Lo que inicio como una manera de compartir conocimiento se transformo en algo mucho mas profundo:{" "}
+                <span className="font-serif italic text-accent">mi proposito de vida</span>.
+              </p>
+              <p className="text-lg leading-relaxed text-foreground/80">
+                Hoy, <span className="font-serif italic text-primary">todo es un balance</span>{" "}
+                es un espacio dedicado a ayudar a las personas a conocerse mejor, a mejorar la relacion consigo mismas y a encontrar ese equilibrio que todos buscamos.
+              </p>
+            </div>
 
-        {/* Credentials */}
-        <div className="mt-20">
-          <h3 className="mb-10 text-center font-serif text-2xl font-light text-foreground md:text-3xl">
-            Respaldo Profesional
-          </h3>
-          <div className="grid gap-6 md:grid-cols-3">
-            {credentials.map((cred) => (
-              <div
-                key={cred.title}
-                className="flex flex-col items-center gap-4 rounded-2xl bg-card p-8 text-center shadow-sm"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15">
-                  <cred.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h4 className="text-base font-semibold text-card-foreground">
-                  {cred.title}
-                </h4>
-                {cred.subtitle && (
-                  <p className="text-sm text-muted-foreground">{cred.subtitle}</p>
-                )}
-                {cred.year && (
-                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                    {cred.year}
-                  </span>
-                )}
+            {/* Credentials inline */}
+            <div>
+              <h3 className="mb-5 font-serif text-2xl font-light text-foreground">
+                Respaldo Profesional
+              </h3>
+              <div className="flex flex-col gap-4">
+                {credentials.map((cred) => (
+                  <div
+                    key={cred.title}
+                    className="flex items-center gap-4 rounded-2xl bg-card/70 p-5 backdrop-blur-sm"
+                  >
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
+                      <cred.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-card-foreground">
+                        {cred.title}
+                      </h4>
+                      {cred.subtitle && (
+                        <p className="text-xs text-muted-foreground">{cred.subtitle}</p>
+                      )}
+                      {cred.year && (
+                        <p className="text-xs text-muted-foreground">{cred.year}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

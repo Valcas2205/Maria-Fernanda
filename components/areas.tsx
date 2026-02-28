@@ -38,13 +38,9 @@ const areas = [
 
 export function Areas() {
   return (
-    <section id="areas" className="relative overflow-hidden py-24 md:py-32">
-      {/* Decorative blobs */}
-      <div className="pointer-events-none absolute -top-16 left-1/4 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
-
+    <section id="areas" className="relative overflow-hidden py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-16 text-center">
+        <div className="mb-10 text-center">
           <span className="mb-3 inline-block rounded-full bg-accent/15 px-4 py-1.5 text-sm font-medium text-accent">
             Servicios
           </span>
@@ -53,11 +49,11 @@ export function Areas() {
           </h2>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3">
           {areas.map((area) => (
             <div
               key={area.title}
-              className="group relative overflow-hidden rounded-3xl bg-card p-8 shadow-sm transition-shadow hover:shadow-lg"
+              className="group relative overflow-hidden rounded-3xl bg-card p-7 shadow-sm transition-shadow hover:shadow-lg"
             >
               {/* Background blob */}
               <div
@@ -66,16 +62,16 @@ export function Areas() {
 
               <div className="relative z-10">
                 <div
-                  className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${area.color}`}
+                  className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ${area.color}`}
                 >
                   <area.icon className="h-6 w-6" />
                 </div>
 
-                <h3 className="mb-4 font-serif text-xl font-medium text-card-foreground">
+                <h3 className="mb-3 font-serif text-xl font-medium text-card-foreground">
                   {area.title}
                 </h3>
 
-                <ul className="flex flex-col gap-3">
+                <ul className="flex flex-col gap-2.5">
                   {area.items.map((item) => (
                     <li
                       key={item}

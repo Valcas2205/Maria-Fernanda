@@ -5,16 +5,11 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative flex min-h-screen items-center overflow-hidden pt-20"
+      className="relative flex min-h-[85vh] items-center overflow-hidden pt-20"
     >
-      {/* Decorative blobs */}
-      <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-20 h-80 w-80 rounded-full bg-secondary/20 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 left-1/2 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
-
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-6 md:flex-row md:gap-16">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-10 px-6 md:flex-row md:gap-14">
         {/* Text block */}
-        <div className="flex flex-1 flex-col gap-6 text-center md:text-left">
+        <div className="flex flex-1 flex-col gap-5 text-center md:text-left">
           <h1 className="font-serif text-4xl leading-tight font-light tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
             Bienvenido a{" "}
             <span className="text-primary italic">todo es un balance</span>
@@ -48,7 +43,7 @@ export function Hero() {
                 alt="Maria Fernanda Azcunes, psicologa"
                 width={420}
                 height={520}
-                className="h-auto w-[320px] object-cover md:w-[420px]"
+                className="h-auto w-[300px] object-cover md:w-[400px]"
                 priority
               />
             </div>
