@@ -1,11 +1,11 @@
-import { Heart, Users, Sparkles } from "lucide-react"
+import Image from "next/image"
 
 const areas = [
   {
-    icon: Heart,
+    icon: "/images/icon-amor-propio.png",
+    iconAlt: "Icono amor propio",
     title: "Amor Propio",
-    color: "bg-primary/15 text-primary",
-    blobColor: "bg-primary/10",
+    blobColor: "bg-secondary/10",
     items: [
       "Autoestima y autoconcepto",
       "Evaluacion psicometrica",
@@ -13,10 +13,10 @@ const areas = [
     ],
   },
   {
-    icon: Users,
+    icon: "/images/icon-relaciones.png",
+    iconAlt: "Icono relaciones",
     title: "Relaciones",
-    color: "bg-secondary/20 text-secondary",
-    blobColor: "bg-secondary/10",
+    blobColor: "bg-accent/10",
     items: [
       "Terapia de parejas",
       "Duelos y perdidas",
@@ -24,10 +24,10 @@ const areas = [
     ],
   },
   {
-    icon: Sparkles,
+    icon: "/images/icon-espiritualidad.png",
+    iconAlt: "Icono espiritualidad",
     title: "Espiritualidad y Salud",
-    color: "bg-accent/15 text-accent",
-    blobColor: "bg-accent/10",
+    blobColor: "bg-primary/10",
     items: [
       "Ansiedad y depresion",
       "Proposito de vida",
@@ -41,10 +41,7 @@ export function Areas() {
     <section id="areas" className="relative overflow-hidden py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 text-center">
-          <span className="mb-3 inline-block rounded-full bg-accent/15 px-4 py-1.5 text-sm font-medium text-accent">
-            Servicios
-          </span>
-          <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">
+          <h2 className="font-serif text-3xl font-light tracking-tight text-[#1a1a1a] md:text-4xl lg:text-5xl text-balance">
             Areas de Trabajo
           </h2>
         </div>
@@ -61,10 +58,14 @@ export function Areas() {
               />
 
               <div className="relative z-10">
-                <div
-                  className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ${area.color}`}
-                >
-                  <area.icon className="h-6 w-6" />
+                <div className="mb-5 flex h-16 w-16 items-center justify-center">
+                  <Image
+                    src={area.icon}
+                    alt={area.iconAlt}
+                    width={56}
+                    height={56}
+                    className="h-14 w-14 object-contain"
+                  />
                 </div>
 
                 <h3 className="mb-3 font-serif text-xl font-medium text-card-foreground">

@@ -53,10 +53,10 @@ export function Pricing() {
     <section id="inversion" className="relative overflow-hidden py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-12 text-center">
-          <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">
+          <h2 className="font-serif text-3xl font-light tracking-tight text-[#1a1a1a] md:text-4xl lg:text-5xl text-balance">
             Servicios
           </h2>
-          <p className="mt-4 font-serif text-lg italic text-foreground/60">
+          <p className="mt-4 font-serif text-lg italic text-[#1a1a1a]/60">
             Elige la opcion que mejor se adapte a tu momento y necesidades
           </p>
         </div>
@@ -72,7 +72,7 @@ export function Pricing() {
               }`}
             >
               {service.badge && (
-                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-5 py-1.5 text-xs font-semibold text-secondary-foreground whitespace-nowrap">
+                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-5 py-1.5 text-xs font-semibold text-[#ffffff] whitespace-nowrap">
                   {service.badge}
                 </span>
               )}
@@ -97,7 +97,7 @@ export function Pricing() {
                 {service.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-center gap-2.5 text-sm">
                     <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
-                    <span className="text-foreground/70">{bullet}</span>
+                    <span className="text-[#1a1a1a]/70">{bullet}</span>
                   </li>
                 ))}
               </ul>

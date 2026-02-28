@@ -34,14 +34,14 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-foreground/70 transition-colors hover:text-primary"
+              className="text-sm font-medium text-[#1a1a1a] transition-colors hover:text-primary"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="#agendar"
-            className="rounded-full bg-secondary px-6 py-2.5 text-sm font-semibold text-secondary-foreground transition-opacity hover:opacity-90"
+            className="rounded-full bg-secondary px-6 py-2.5 text-sm font-semibold text-[#ffffff] transition-opacity hover:opacity-90"
           >
             {"Te esperamos!"}
           </Link>
@@ -50,7 +50,7 @@ export function Header() {
         {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-foreground"
+          className="md:hidden text-[#1a1a1a]"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -65,7 +65,7 @@ export function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="text-base font-medium text-foreground/70 transition-colors hover:text-primary"
+              className="text-base font-medium text-[#1a1a1a] transition-colors hover:text-primary"
             >
               {link.label}
             </Link>
@@ -73,7 +73,7 @@ export function Header() {
           <Link
             href="#agendar"
             onClick={() => setMobileOpen(false)}
-            className="mt-2 rounded-full bg-secondary px-5 py-2.5 text-center text-sm font-semibold text-secondary-foreground transition-opacity hover:opacity-90"
+            className="mt-2 rounded-full bg-secondary px-5 py-2.5 text-center text-sm font-semibold text-[#ffffff] transition-opacity hover:opacity-90"
           >
             {"Te esperamos!"}
           </Link>
