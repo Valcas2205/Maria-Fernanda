@@ -1,39 +1,50 @@
 import Link from "next/link"
-import { Check } from "lucide-react"
+import { Video, Users, BookOpen, Clock } from "lucide-react"
 
-const plans = [
+const services = [
   {
-    title: "Consulta Individual",
-    subtitle: "Presencial",
-    price: "Consultar",
-    features: [
-      "Sesion de 50 minutos",
-      "Espacio confidencial",
-      "Plan terapeutico personalizado",
+    icon: Video,
+    title: "Terapia Individual",
+    description:
+      "Sesiones personalizadas online o presenciales en Barquisimeto. Trabajo con depresion, ansiedad, autoestima, duelo, y trastornos de la conducta alimentaria.",
+    bullets: [
+      "Sesiones de 60 minutos",
+      "Online en todo el mundo",
+      "Presencial en Barquisimeto",
     ],
+    price: "\u20AC45",
+    priceLabel: "por sesion",
     highlighted: false,
   },
   {
-    title: "Consulta Individual",
-    subtitle: "Online",
-    price: "Consultar",
-    features: [
-      "Sesion de 50 minutos",
-      "Desde cualquier lugar",
-      "Misma calidad terapeutica",
-    ],
-    highlighted: true,
-  },
-  {
+    icon: Users,
     title: "Terapia de Parejas",
-    subtitle: "Presencial u Online",
-    price: "Consultar",
-    features: [
-      "Sesion de 60 minutos",
-      "Trabajo conjunto",
+    description:
+      "Espacios seguros para fortalecer la comunicacion, resolver conflictos y reconstruir la conexion en tu relacion.",
+    bullets: [
+      "Enfoque practico",
       "Herramientas de comunicacion",
+      "Seguimiento personalizado",
     ],
+    price: "\u20AC60",
+    priceLabel: "por sesion",
+    highlighted: true,
+    badge: "Mas solicitado",
+  },
+  {
+    icon: BookOpen,
+    title: "Talleres y Recursos",
+    description:
+      "Talleres grupales, cursos y material descargable para que sigas aprendiendo y creciendo a tu propio ritmo.",
+    bullets: [
+      "Contenido exclusivo",
+      "Actividades practicas",
+      "Comunidad de apoyo",
+    ],
+    price: null,
+    priceLabel: null,
     highlighted: false,
+    ctaLabel: "Mas info",
   },
 ]
 
@@ -41,71 +52,75 @@ export function Pricing() {
   return (
     <section id="inversion" className="relative overflow-hidden py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-10 text-center">
-          <span className="mb-3 inline-block rounded-full bg-secondary/15 px-4 py-1.5 text-sm font-medium text-[#c27868]">
-            Tarifas
-          </span>
+        <div className="mb-12 text-center">
           <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">
-            Inversion en ti
+            Servicios
           </h2>
+          <p className="mt-4 font-serif text-lg italic text-foreground/60">
+            Elige la opcion que mejor se adapte a tu momento y necesidades
+          </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {plans.map((plan) => (
+          {services.map((service) => (
             <div
-              key={`${plan.title}-${plan.subtitle}`}
-              className={`relative flex flex-col rounded-3xl p-7 shadow-sm transition-shadow hover:shadow-lg ${
-                plan.highlighted
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-card-foreground"
+              key={service.title}
+              className={`relative flex flex-col rounded-3xl p-7 transition-shadow hover:shadow-lg ${
+                service.highlighted
+                  ? "border-2 border-primary/30 bg-card shadow-md"
+                  : "bg-card shadow-sm"
               }`}
             >
-              {plan.highlighted && (
-                <span className="absolute -top-3 right-6 rounded-full bg-secondary px-4 py-1 text-xs font-semibold text-secondary-foreground">
-                  Popular
+              {service.badge && (
+                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-5 py-1.5 text-xs font-semibold text-secondary-foreground whitespace-nowrap">
+                  {service.badge}
                 </span>
               )}
 
-              <h3 className="font-serif text-xl font-medium">{plan.title}</h3>
-              <p
-                className={`mt-1 text-sm ${
-                  plan.highlighted ? "text-primary-foreground/80" : "text-muted-foreground"
-                }`}
-              >
-                {plan.subtitle}
+              {/* Icon */}
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted/60">
+                <service.icon className="h-5 w-5 text-accent" />
+              </div>
+
+              {/* Title */}
+              <h3 className="font-serif text-xl font-medium text-card-foreground">
+                {service.title}
+              </h3>
+
+              {/* Description */}
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {service.description}
               </p>
 
-              <p className="mt-5 font-serif text-3xl font-light">{plan.price}</p>
-
-              <ul className="mt-6 flex flex-1 flex-col gap-3">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3 text-sm">
-                    <Check
-                      className={`h-4 w-4 flex-shrink-0 ${
-                        plan.highlighted ? "text-primary-foreground/80" : "text-primary"
-                      }`}
-                    />
-                    <span
-                      className={
-                        plan.highlighted ? "text-primary-foreground/90" : "text-muted-foreground"
-                      }
-                    >
-                      {feature}
-                    </span>
+              {/* Bullet points */}
+              <ul className="mt-5 flex flex-1 flex-col gap-2.5">
+                {service.bullets.map((bullet) => (
+                  <li key={bullet} className="flex items-center gap-2.5 text-sm">
+                    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
+                    <span className="text-foreground/70">{bullet}</span>
                   </li>
                 ))}
               </ul>
 
-              <Link
-                href="#agendar"
-                className={`mt-6 block rounded-full py-3 text-center text-sm font-semibold transition-opacity hover:opacity-90 ${
-                  plan.highlighted
-                    ? "bg-card text-primary"
-                    : "bg-primary text-primary-foreground"
-                }`}
-              >
-                Agendar cita
-              </Link>
+              {/* Price or CTA */}
+              {service.price ? (
+                <div className="mt-6 flex items-center gap-2">
+                  <span className="font-serif text-3xl font-light text-secondary">
+                    {service.price}
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    <span>{service.priceLabel}</span>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="#agendar"
+                  className="mt-6 block rounded-full border-2 border-accent/40 py-3 text-center text-sm font-medium text-accent transition-colors hover:bg-accent/10"
+                >
+                  {service.ctaLabel}
+                </Link>
+              )}
             </div>
           ))}
         </div>

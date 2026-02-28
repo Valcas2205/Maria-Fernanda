@@ -12,19 +12,19 @@ export function Header() {
     { label: "Inicio", href: "#inicio" },
     { label: "Sobre mi", href: "#sobre-mi" },
     { label: "Areas de trabajo", href: "#areas" },
-    { label: "Inversion", href: "#inversion" },
+    { label: "Agendar cita", href: "#agendar" },
   ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="#inicio" className="flex-shrink-0">
           <Image
             src="/images/logo.png"
             alt="Todo es un balance"
-            width={180}
-            height={40}
-            className="h-8 w-auto"
+            width={220}
+            height={44}
+            className="h-9 w-auto md:h-10"
           />
         </Link>
 
@@ -41,9 +41,9 @@ export function Header() {
           ))}
           <Link
             href="#agendar"
-            className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            className="rounded-full bg-secondary px-6 py-2.5 text-sm font-semibold text-secondary-foreground transition-opacity hover:opacity-90"
           >
-            Agendar cita
+            {"Te esperamos!"}
           </Link>
         </nav>
 
@@ -73,9 +73,9 @@ export function Header() {
           <Link
             href="#agendar"
             onClick={() => setMobileOpen(false)}
-            className="mt-2 rounded-full bg-primary px-5 py-2.5 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            className="mt-2 rounded-full bg-secondary px-5 py-2.5 text-center text-sm font-semibold text-secondary-foreground transition-opacity hover:opacity-90"
           >
-            Agendar cita
+            {"Te esperamos!"}
           </Link>
         </nav>
       )}

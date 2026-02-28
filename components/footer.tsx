@@ -1,9 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
+import { Mail } from "lucide-react"
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
       <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
@@ -27,51 +28,102 @@ function ThreadsIcon({ className }: { className?: string }) {
   )
 }
 
+const socialLinks = [
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/todoesunbalance/",
+    icon: InstagramIcon,
+  },
+  {
+    label: "TikTok",
+    href: "https://www.tiktok.com/@todoesunbalance",
+    icon: TikTokIcon,
+  },
+  {
+    label: "Threads",
+    href: "https://www.threads.com/@todoesunbalance",
+    icon: ThreadsIcon,
+  },
+  {
+    label: "Email",
+    href: "mailto:contacto@todoesunbalance.com",
+    icon: Mail,
+  },
+]
+
+const legalLinks = [
+  { label: "Politica de Privacidad", href: "#" },
+  { label: "Terminos y Condiciones", href: "#" },
+  { label: "Aviso Legal", href: "#" },
+]
+
 export function Footer() {
   return (
-    <footer className="border-t border-border/50 py-12">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-6">
-        <Image
-          src="/images/logo.png"
-          alt="Todo es un balance"
-          width={160}
-          height={36}
-          className="h-7 w-auto opacity-70"
-        />
+    <footer className="py-12">
+      <div className="mx-auto max-w-6xl px-6">
+        {/* Top row: logo + tagline | social icons | legal links */}
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          {/* Left: Logo + tagline + seal */}
+          <div className="flex flex-col gap-3">
+            <Image
+              src="/images/logo.png"
+              alt="Todo es un balance"
+              width={180}
+              height={40}
+              className="h-8 w-auto"
+            />
+            <p className="font-serif text-sm italic text-foreground/60">
+              Psicologia clinica con enfoque practico y empatico
+            </p>
+          </div>
 
-        <div className="flex items-center gap-6">
-          <Link
-            href="https://www.instagram.com/todoesunbalance/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-            className="text-foreground/40 transition-colors hover:text-primary"
-          >
-            <InstagramIcon className="h-5 w-5" />
-          </Link>
-          <Link
-            href="https://www.tiktok.com/@todoesunbalance"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="TikTok"
-            className="text-foreground/40 transition-colors hover:text-primary"
-          >
-            <TikTokIcon className="h-5 w-5" />
-          </Link>
-          <Link
-            href="https://www.threads.com/@todoesunbalance"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Threads"
-            className="text-foreground/40 transition-colors hover:text-primary"
-          >
-            <ThreadsIcon className="h-5 w-5" />
-          </Link>
+          {/* Center: Social icons */}
+          <div className="flex items-center gap-4">
+            {socialLinks.map((social) => (
+              <Link
+                key={social.label}
+                href={social.href}
+                target={social.href.startsWith("http") ? "_blank" : undefined}
+                rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                aria-label={social.label}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 text-secondary transition-colors hover:bg-secondary/40"
+              >
+                <social.icon className="h-4 w-4" />
+              </Link>
+            ))}
+          </div>
+
+          {/* Right: Legal links */}
+          <div className="flex flex-col items-start gap-2 md:items-end">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-sm text-foreground/50 transition-colors hover:text-foreground/80"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
-        <p className="text-sm text-muted-foreground">
-          {'Todo es un balance. Todos los derechos reservados.'}
-        </p>
+        {/* Seal image centered */}
+        <div className="mt-8 flex justify-center">
+          <Image
+            src="/images/sello.png"
+            alt="Sello Todo es un Balance - Psic. Maria Fernanda Azcunes"
+            width={80}
+            height={80}
+            className="h-16 w-16 opacity-40"
+          />
+        </div>
+
+        {/* Divider + copyright */}
+        <div className="mt-6 border-t border-border/40 pt-6">
+          <p className="text-center text-sm text-foreground/40">
+            {"2026 Todo es un Balance \u00B7 Maria Fernanda Azcunes. Todos los derechos reservados."}
+          </p>
+        </div>
       </div>
     </footer>
   )
