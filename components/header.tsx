@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
 
+const WS_LINK = "https://wa.me/584245414804?text=Hola%2C%20me%20gustaria%20agendar%20una%20cita"
+
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -12,7 +14,7 @@ export function Header() {
     { label: "Inicio", href: "#inicio" },
     { label: "Sobre mi", href: "#sobre-mi" },
     { label: "Areas de trabajo", href: "#areas" },
-    { label: "Agendar cita", href: "#agendar" },
+    { label: "Agendar cita", href: WS_LINK, external: true },
   ]
 
   return (
@@ -32,15 +34,18 @@ export function Header() {
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
             <Link
-              key={link.href}
+              key={link.label}
               href={link.href}
+              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               className="text-sm font-medium text-[#1a1a1a] transition-colors hover:text-primary"
             >
               {link.label}
             </Link>
           ))}
           <Link
-            href="#agendar"
+            href={WS_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-full bg-secondary px-6 py-2.5 text-sm font-semibold text-[#ffffff] transition-opacity hover:opacity-90"
           >
             {"Te esperamos!"}
@@ -62,8 +67,9 @@ export function Header() {
         <nav className="flex flex-col gap-4 border-t border-border/50 bg-background px-6 py-6 md:hidden">
           {navLinks.map((link) => (
             <Link
-              key={link.href}
+              key={link.label}
               href={link.href}
+              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               onClick={() => setMobileOpen(false)}
               className="text-base font-medium text-[#1a1a1a] transition-colors hover:text-primary"
             >
@@ -71,7 +77,9 @@ export function Header() {
             </Link>
           ))}
           <Link
-            href="#agendar"
+            href={WS_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setMobileOpen(false)}
             className="mt-2 rounded-full bg-secondary px-5 py-2.5 text-center text-sm font-semibold text-[#ffffff] transition-opacity hover:opacity-90"
           >

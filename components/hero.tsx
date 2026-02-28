@@ -1,6 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 
+const WS_LINK = "https://wa.me/584245414804?text=Hola%2C%20me%20gustaria%20agendar%20una%20cita"
+
 export function Hero() {
   return (
     <section
@@ -19,7 +21,9 @@ export function Hero() {
           </p>
           <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start">
             <Link
-              href="#agendar"
+              href={WS_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               Agendar cita
@@ -36,7 +40,6 @@ export function Hero() {
         {/* Image collage */}
         <div className="relative flex flex-1 justify-center">
           <div className="relative">
-            {/* Main image */}
             <div className="relative z-10 overflow-hidden rounded-[2rem] shadow-2xl shadow-primary/10">
               <Image
                 src="/images/about-sofa.jpg"
@@ -47,7 +50,6 @@ export function Hero() {
                 priority
               />
             </div>
-            {/* Second smaller image overlapping */}
             <div className="absolute -right-8 -bottom-8 z-20 overflow-hidden rounded-2xl border-4 border-background shadow-lg md:-right-12 md:-bottom-12">
               <Image
                 src="/images/hero-diplomas.jpg"
@@ -58,7 +60,6 @@ export function Hero() {
                 priority
               />
             </div>
-            {/* Decorative blob behind */}
             <div className="absolute -top-6 -left-6 -z-10 h-full w-full rounded-[2rem] bg-primary/20" />
           </div>
         </div>
