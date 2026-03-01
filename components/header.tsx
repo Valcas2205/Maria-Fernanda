@@ -10,7 +10,7 @@ const WS_LINK = "https://wa.me/584245414804?text=Hola%2C%20me%20gustaria%20agend
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const navLinks = [
+  const navLinks: { label: string; href: string; external?: boolean }[] = [
     { label: "Inicio", href: "#inicio" },
     { label: "Sobre mi", href: "#sobre-mi" },
     { label: "Areas de trabajo", href: "#areas" },
