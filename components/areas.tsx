@@ -2,10 +2,10 @@ import Image from "next/image"
 
 const areas = [
   {
-    icon: "/images/icon-amor-propio.png",
+    icon: "/images/Amor.propio.png",
     iconAlt: "Icono amor propio",
     title: "Amor Propio",
-    blobColor: "bg-secondary/10",
+    blobColor: "bg-[#8fb299]/20",
     items: [
       "Autoestima y autoconcepto",
       "Evaluacion psicometrica",
@@ -13,10 +13,10 @@ const areas = [
     ],
   },
   {
-    icon: "/images/icon-relaciones.png",
+    icon: "/images/Relaciones.png",
     iconAlt: "Icono relaciones",
     title: "Relaciones",
-    blobColor: "bg-accent/10",
+    blobColor: "bg-[#e5a697]/20",
     items: [
       "Terapia de parejas",
       "Duelos y perdidas",
@@ -24,12 +24,12 @@ const areas = [
     ],
   },
   {
-    icon: "/images/icon-espiritualidad.png",
+    icon: "/images/Espiritualidad.png",
     iconAlt: "Icono espiritualidad",
     title: "Espiritualidad y Salud",
-    blobColor: "bg-primary/10",
+    blobColor: "bg-[#7db1c3]/20",
     items: [
-      "Ansiedad y depresion",
+      "Ansiedad and depresion",
       "Proposito de vida",
       "Trastornos de conducta alimentaria",
     ],
@@ -38,11 +38,11 @@ const areas = [
 
 export function Areas() {
   return (
-    <section id="areas" className="relative overflow-hidden py-16 md:py-24">
+    <section id="areas" className="relative overflow-hidden py-10 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-10 text-center">
-          <h2 className="font-serif text-3xl font-light tracking-tight text-[#1a1a1a] md:text-4xl lg:text-5xl text-balance">
-            Areas de Trabajo
+        <div className="mb-12 text-center">
+          <h2 className="font-serif text-3xl font-medium tracking-tight text-[#1a1a1a] md:text-4xl lg:text-5xl text-balance">
+            ¿Te sientes identificado?
           </h2>
         </div>
 
@@ -50,7 +50,7 @@ export function Areas() {
           {areas.map((area) => (
             <div
               key={area.title}
-              className="group relative overflow-hidden rounded-3xl bg-card p-7 shadow-sm transition-shadow hover:shadow-lg"
+              className="group relative overflow-hidden rounded-3xl bg-card p-8 md:p-10 shadow-sm transition-shadow hover:shadow-lg"
             >
               {/* Background blob */}
               <div
@@ -58,27 +58,27 @@ export function Areas() {
               />
 
               <div className="relative z-10">
-                <div className="mb-5 flex h-16 w-16 items-center justify-center">
+                <div className="mb-6 flex h-20 w-20 items-center justify-center">
                   <Image
                     src={area.icon}
                     alt={area.iconAlt}
-                    width={56}
-                    height={56}
-                    className="h-14 w-14 object-contain"
+                    width={80}
+                    height={80}
+                    className="h-20 w-20 object-contain"
                   />
                 </div>
 
-                <h3 className="mb-3 font-serif text-xl font-medium text-card-foreground">
+                <h3 className="mb-4 font-serif text-2xl font-semibold text-card-foreground md:text-3xl">
                   {area.title}
                 </h3>
 
-                <ul className="flex flex-col gap-2.5">
+                <ul className="flex flex-col gap-3">
                   {area.items.map((item) => (
                     <li
                       key={item}
-                      className="flex items-start gap-2 text-sm leading-relaxed text-muted-foreground"
+                      className="flex items-start gap-3 text-lg leading-relaxed text-[#333333]"
                     >
-                      <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary/50" />
+                      <span className="mt-2.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary/60" />
                       {item}
                     </li>
                   ))}

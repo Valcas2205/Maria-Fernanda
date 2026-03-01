@@ -40,9 +40,9 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section className="relative overflow-hidden py-14 md:py-20">
+    <section className="relative overflow-hidden py-10 md:py-16">
       <div className="mx-auto max-w-3xl px-6">
-        <h2 className="mb-10 text-center font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">
+        <h2 className="mb-10 text-center font-serif text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
           Preguntas Frecuentes
         </h2>
 
@@ -59,7 +59,7 @@ export function FAQ() {
                 className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
                 aria-expanded={openIndex === index}
               >
-                <span className="font-serif text-base font-semibold text-[#1a1a1a] md:text-lg">
+                <span className="font-serif text-lg font-bold text-[#1a1a1a] md:text-xl">
                   {faq.question}
                 </span>
                 <ChevronDown
@@ -76,7 +76,7 @@ export function FAQ() {
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="px-6 pb-5 text-sm leading-relaxed text-muted-foreground md:text-base">
+                  <p className="px-6 pb-5 text-base leading-relaxed text-[#333333] md:text-lg">
                     {faq.answer}
                   </p>
                 </div>

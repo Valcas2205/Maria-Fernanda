@@ -13,11 +13,11 @@ export function Hero() {
 
         {/* Text block & Botones */}
         <div className="flex flex-1 flex-col gap-5 text-center md:text-left">
-          <h1 className="font-serif text-4xl leading-tight font-light tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
+          <h1 className="font-serif text-5xl font-bold leading-tight tracking-tight text-foreground md:text-6xl lg:text-7xl text-balance animate-fade-up">
             Bienvenido a{" "}
-            <span className="text-primary italic">todo es un balance</span>
+            <span className="font-serif italic text-primary">todo es un balance</span>
           </h1>
-          <p className="max-w-lg text-lg leading-relaxed text-muted-foreground md:text-xl">
+          <p className="max-w-lg text-xl leading-relaxed text-foreground/90 md:text-2xl animate-fade-up animate-delay-150">
             Un espacio creado pensando en tu bienestar
           </p>
 
@@ -38,7 +38,7 @@ export function Hero() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start">
+          <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start animate-fade-up animate-delay-300">
             <Link
               href={WS_LINK}
               target="_blank"
@@ -57,15 +57,15 @@ export function Hero() {
         </div>
 
         {/* Imagen solo para Desktop */}
-        <div className="relative hidden flex-1 justify-center md:flex">
+        <div className="relative hidden flex-1 justify-center md:flex lg:justify-end animate-fade-up animate-delay-500">
           <div className="relative">
             <div className="relative z-10 overflow-hidden rounded-[2rem] shadow-2xl shadow-primary/10">
               <Image
                 src="/images/about-sofa.jpg"
                 alt="Maria Fernanda Azcunes, psicologa"
-                width={420}
-                height={520}
-                className="h-auto w-[400px] object-cover"
+                width={480}
+                height={600}
+                className="h-auto w-[400px] object-cover md:w-[380px] lg:w-[480px]"
                 priority
               />
             </div>

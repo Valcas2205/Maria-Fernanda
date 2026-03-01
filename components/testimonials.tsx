@@ -144,10 +144,10 @@ export function Testimonials() {
   }
 
   return (
-    <section className="relative overflow-hidden py-14 md:py-20">
+    <section className="relative overflow-hidden py-10 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 text-center">
-          <h2 className="font-serif text-3xl font-light tracking-tight text-[#1a1a1a] md:text-4xl lg:text-5xl text-balance">
+          <h2 className="font-serif text-4xl font-bold tracking-tight text-[#1a1a1a] md:text-5xl lg:text-6xl text-balance">
             Historias de Balance
           </h2>
         </div>
@@ -187,12 +187,12 @@ export function Testimonials() {
                 />
 
                 {/* Quote */}
-                <p className="relative z-10 mb-8 flex-1 font-serif text-[15px] leading-[1.7] text-[#1a1a1a]/80 md:text-base">
+                <p className="relative z-10 mb-8 flex-1 font-serif text-base leading-relaxed text-[#333333] md:text-lg">
                   {`"${t.quote}"`}
                 </p>
 
                 {/* Author */}
-                <p className={`relative z-10 text-sm font-semibold ${t.nameColor}`}>
+                <p className={`relative z-10 text-base font-bold ${t.nameColor}`}>
                   {`— ${t.author}`}
                 </p>
               </div>
