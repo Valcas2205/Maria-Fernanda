@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
+import { motion } from "framer-motion"
 
 const faqs = [
   {
@@ -48,7 +49,11 @@ export function FAQ() {
 
         <div className="flex flex-col gap-3">
           {faqs.map((faq, index) => (
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               key={index}
               className="overflow-hidden rounded-2xl bg-card shadow-sm transition-shadow hover:shadow-md"
             >
@@ -81,7 +86,7 @@ export function FAQ() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

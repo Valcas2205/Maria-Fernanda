@@ -156,19 +156,19 @@ export function Testimonials() {
           {/* Left arrow */}
           <button
             onClick={goPrev}
-            className="absolute -left-3 top-1/2 z-10 -translate-y-1/2 text-secondary/60 transition-colors hover:text-secondary md:-left-10"
+            className="absolute -left-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-secondary/10 bg-white/90 text-secondary/70 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:text-secondary hover:shadow-md md:-left-6 lg:-left-12"
             aria-label="Anterior"
           >
-            <ChevronLeft className="h-8 w-8" strokeWidth={1.5} />
+            <ChevronLeft className="h-6 w-6" strokeWidth={1.5} />
           </button>
 
           {/* Right arrow */}
           <button
             onClick={goNext}
-            className="absolute -right-3 top-1/2 z-10 -translate-y-1/2 text-secondary/60 transition-colors hover:text-secondary md:-right-10"
+            className="absolute -right-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-secondary/10 bg-white/90 text-secondary/70 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:text-secondary hover:shadow-md md:-right-4 lg:-right-12"
             aria-label="Siguiente"
           >
-            <ChevronRight className="h-8 w-8" strokeWidth={1.5} />
+            <ChevronRight className="h-6 w-6" strokeWidth={1.5} />
           </button>
 
           {/* Cards */}

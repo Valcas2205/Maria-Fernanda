@@ -14,7 +14,7 @@ export function Header() {
     { label: "Inicio", href: "#inicio" },
     { label: "Sobre mi", href: "#sobre-mi" },
     { label: "Areas de trabajo", href: "#areas" },
-    { label: "Agendar cita", href: WS_LINK, external: true },
+    { label: "Agendar cita", href: "#agendar" },
   ]
 
   return (
