@@ -22,7 +22,7 @@ export function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/#inicio" className="flex-shrink-0">
           <Image
-            src="/images/Logomarron.png"
+            src="/images/brand-logo.png"
             alt="Todo es un balance"
             width={220}
             height={44}
