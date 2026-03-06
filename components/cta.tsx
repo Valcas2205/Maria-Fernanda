@@ -51,7 +51,7 @@ export function CTA() {
               {/* Imagen principal */}
               <div className="relative z-10 aspect-[3/4] w-full overflow-hidden rounded-[2rem] shadow-2xl shadow-primary/10">
                 <Image
-                  src="/images/503105315_18502906012055653_3828358369673935537_n.jpg"
+                  src="/images/Invitación Cuadrada Bautismo Acuarela Rosa-2.png"
                   alt="Maria Fernanda, el primer paso es decidirte"
                   fill
                   className="object-cover"

@@ -5,17 +5,17 @@ const credentials = [
   {
     icon: GraduationCap,
     title: "Licenciada en Psicologia",
-    year: "2022",
+    year: "Universidad Yacambú, 2022.",
   },
   {
     icon: Award,
     title: "Master en Psicologia Clinica y de la Salud",
-    subtitle: "ISEP, Espana",
+    subtitle: "ISEP, España. 2024.",
   },
   {
     icon: BookOpen,
-    title: "Especializacion en Psicoterapia Cognitivo Conductual",
-    subtitle: "",
+    title: "Psicoterapeuta Cognitivo Conductual.",
+    subtitle: "ISEP, España. 2024.",
   },
 ]
 
@@ -44,15 +44,20 @@ export function About() {
             </h2>
             <div className="flex flex-col gap-4">
               <p className="text-lg leading-relaxed text-foreground/80">
-                Todo comenzo en 2020, cuando este proyecto nacio como un blog psicoeducativo. Lo que inicio como una manera de compartir conocimiento se transformo en algo mucho mas profundo:{" "}
+                Todo es un balance comenzó en el 2020 durante pandemia, mientras cursaba la universidad, como un
+blog psicoeducativo. Lo que inició como una manera de compartir conocimientos se transformó en
+algo mucho más profundo:{" "}
                 <span className="font-serif italic text-accent">mi proposito de vida</span>.
               </p>
               <p className="text-lg leading-relaxed text-foreground/80">
                 Hoy, <span className="font-serif italic text-primary">todo es un balance</span>{" "}
-                es un espacio dedicado a ayudar a las personas a conocerse mejor, a mejorar la relacion consigo mismas y a encontrar ese equilibrio que todos buscamos.
+                es un espacio dedicado a ayudar a las personas a conocerse mejor, a mejorar
+la relación con ellos mismos, a amarse, descubrir su propósito de vida, mejorar sus relaciones
+interpersonales y a encontrar ese equilibrio y estabilidad mental y emocional que todos buscamos.
               </p>
               <p className="text-lg leading-relaxed text-foreground/80">
-                Creo profundamente en que la terapia es un acto de valentia, y me siento honrada cada vez que alguien me permite acompanarle en su proceso.
+                Creo profundamente en que la terapia es un acto de amor propio. Para mi es un placer poder
+acompañar a cada uno de mis pacientes en su viaje al bienestar.
               </p>
             </div>
 

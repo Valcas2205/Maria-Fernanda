@@ -11,18 +11,18 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const navLinks: { label: string; href: string; external?: boolean }[] = [
-    { label: "Inicio", href: "#inicio" },
-    { label: "Sobre mi", href: "#sobre-mi" },
-    { label: "Areas de trabajo", href: "#areas" },
-    { label: "Agendar cita", href: "#agendar" },
+    { label: "Inicio", href: "/#inicio" },
+    { label: "Sobre mi", href: "/#sobre-mi" },
+    { label: "Areas de trabajo", href: "/#areas" },
+    { label: "Agendar cita", href: "/#agendar" },
   ]
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="#inicio" className="flex-shrink-0">
+        <Link href="/#inicio" className="flex-shrink-0">
           <Image
-            src="/images/logo.png"
+            src="/images/Logomarron.png"
             alt="Todo es un balance"
             width={220}
             height={44}

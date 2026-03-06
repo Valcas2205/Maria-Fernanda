@@ -6,24 +6,24 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 const testimonials = [
   {
     quote:
-      "Por fin entiendo mi ansiedad y tengo herramientas reales para gestionarla. Ya no me controla, yo la gestiono. El proceso me devolvio una tranquilidad que pense que habia perdido para siempre.",
-    author: "Sofia R.",
+      "Estar en terapia contigo ha sido un regalo de la vida, en cada consulta descubro un poco más de mí mientras me acompañas en el proceso del amor propio y el cómo manejar mi ansiedad, me enseñaste que todos las emociones son válidas y en lo bonito que es pasar tiempo consigo mismo. Con tu apoyo y las herramientas que me regalas en cada consulta, se que cada día es una bendición. Gracias Mafe.",
+    author: "M.R.",
     dotColor: "bg-[#b8d4e3]",
     blobColor: "bg-[#b8d4e3]/20",
     nameColor: "text-accent",
   },
   {
     quote:
-      "Empece a valorarme y a entender que merezco amor propio. Las sesiones fueron un antes y un despues en mi vida. Hoy me miro al espejo y veo a alguien que merece ser feliz.",
-    author: "Andrea P.",
+      "La terapia con Mafe para mi tuvo un antes y un después en mi vida, empecé en un momento muy bajo y desde ahí todo fue maravilloso. Mafe es demasiado tranquila, empática y por más que sea una psicóloga termina siendo una amiga y de las mejores, trabajar mis problemas y pensamientos con mafe es más fácil de lo que en algún momento fue. Creo que todo el mundo necesita tener un lugar seguro como lo es el consultorio de mafe y una persona especial como lo es ella❤️.",
+    author: "E.B.H.",
     dotColor: "bg-primary/60",
     blobColor: "bg-primary/15",
     nameColor: "text-primary",
   },
   {
     quote:
-      "Trabajar el duelo con Maria Fernanda me permitio sanar a mi ritmo, sin presiones. Encontre paz en el proceso. Me dio espacio para sentir y herramientas para seguir adelante.",
-    author: "Miguel A.",
+      "La terapia contigo doc ha sido un subí y baja de emociones, pero sobre todo me ha ayudado a sobrellevar esas situaciones donde me sentia perdida y sola, conseguí mi lugar seguro donde puedo expresarme y sentir todas las emociones que me invaden❤️.",
+    author: "A.A.",
     dotColor: "bg-secondary/70",
     blobColor: "bg-secondary/15",
     nameColor: "text-secondary",
@@ -132,7 +132,7 @@ export function Testimonials() {
   }, [totalPages])
 
   useEffect(() => {
-    const timer = setInterval(goNext, 7000)
+    const timer = setInterval(goNext, 22000)
     return () => clearInterval(timer)
   }, [goNext])
 
@@ -176,10 +176,10 @@ export function Testimonials() {
             {visibleTestimonials.map((t, i) => (
               <div
                 key={`${currentIndex}-${i}`}
-                className="relative flex flex-col overflow-hidden rounded-3xl bg-card p-8 shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-right-4"
+                className="relative flex h-[350px] flex-col overflow-hidden rounded-3xl bg-card p-6 shadow-sm duration-700 animate-in fade-in lg:h-[380px] lg:p-8"
               >
                 {/* Top colored dot */}
-                <div className={`mb-8 h-10 w-10 rounded-full ${t.dotColor}`} />
+                <div className={`mb-6 h-8 w-8 shrink-0 rounded-full lg:mb-8 lg:h-10 lg:w-10 ${t.dotColor}`} />
 
                 {/* Bottom-right blob decoration */}
                 <div
@@ -187,12 +187,14 @@ export function Testimonials() {
                 />
 
                 {/* Quote */}
-                <p className="relative z-10 mb-8 flex-1 font-serif text-base leading-relaxed text-[#333333] md:text-lg">
-                  {`"${t.quote}"`}
-                </p>
+                <div className="relative z-10 mb-4 flex-1 overflow-y-auto pr-2 pb-2">
+                  <p className="font-serif text-[15px] leading-relaxed text-[#333333] lg:text-base">
+                    {`"${t.quote}"`}
+                  </p>
+                </div>
 
                 {/* Author */}
-                <p className={`relative z-10 text-base font-bold ${t.nameColor}`}>
+                <p className={`relative z-10 shrink-0 text-base font-bold ${t.nameColor}`}>
                   {`— ${t.author}`}
                 </p>
               </div>

@@ -10,14 +10,14 @@ const services = [
     iconBg: "bg-accent/15",
     title: "Terapia Individual",
     description:
-      "Sesiones personalizadas online o presenciales en Barquisimeto. Trabajo con depresion, ansiedad, autoestima, duelo, y trastornos de la conducta alimentaria.",
+      "Sesiones personalizadas individuales. Adultos y adolescentes a partir de 16 años.",
     bullets: [
-      "Sesiones de 60 minutos",
-      "Online en todo el mundo",
-      "Presencial en Barquisimeto",
+      "Sesiones de 60 minutos.",
+      "Online en todo el mundo.",
+      "Presencial en Barquisimeto, Venezuela.",
     ],
-    price: "\u20AC45",
-    priceLabel: "por sesion",
+    price: "€50",
+    priceLabel: "por sesión",
     bulletColor: "bg-accent",
   },
   {
@@ -26,14 +26,14 @@ const services = [
     iconBg: "bg-secondary/15",
     title: "Terapia de Parejas",
     description:
-      "Espacios seguros para fortalecer la comunicacion, resolver conflictos y reconstruir la conexion en tu relacion.",
+      "Sesiones en pareja. Se recomienda antes asistir ambos individualmente. Espacio seguro para trabajar en la comunicación, resolución de conflictos y reconexión emocional.",
     bullets: [
-      "Enfoque practico",
-      "Herramientas de comunicacion",
-      "Seguimiento personalizado",
+      "Sesiones de 90-120 minutos.",
+      "Online en todo el mundo.",
+      "Presencial en Barquisimeto, Venezuela.",
     ],
-    price: "\u20AC60",
-    priceLabel: "por sesion",
+    price: "€70",
+    priceLabel: "por sesión",
     bulletColor: "bg-secondary",
   },
   {
@@ -42,15 +42,15 @@ const services = [
     iconBg: "bg-primary/15",
     title: "Talleres y Recursos",
     description:
-      "Talleres grupales, cursos y material descargable para que sigas aprendiendo y creciendo a tu propio ritmo.",
+      "Talleres grupales, cursos y material descargable para que sigas aprendiendo y creciendo a tu propio ritmo",
     bullets: [
-      "Contenido exclusivo",
-      "Actividades practicas",
-      "Comunidad de apoyo",
+      "Talleres/cursos presenciales y online constantes que se anuncian en redes sociales.",
+      "Talleres/formaciones sobre inteligencia emocional y trabajo en equipo para empresas/organizaciones.",
+      "Contenido/material exclusivo que conseguirás en todas mis redes sociales.",
     ],
     price: null,
     priceLabel: null,
-    ctaLabel: "Mas info",
+    ctaLabel: "Más info",
     bulletColor: "bg-primary",
   },
 ]
@@ -69,54 +69,56 @@ export function Pricing() {
           {services.map((service) => (
             <div
               key={service.title}
-              className="relative flex flex-col rounded-3xl bg-card p-7 shadow-sm transition-shadow hover:shadow-lg"
+              className="relative flex h-full flex-col rounded-3xl bg-card p-6 shadow-sm transition-shadow hover:shadow-lg lg:p-8"
             >
               {/* Icon */}
-              <div className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl ${service.iconBg}`}>
-                <service.icon className={`h-8 w-8 ${service.iconColor}`} strokeWidth={1.5} />
+              <div className={`mb-6 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${service.iconBg} lg:h-16 lg:w-16`}>
+                <service.icon className={`h-7 w-7 ${service.iconColor} lg:h-8 lg:w-8`} strokeWidth={1.5} />
               </div>
 
               {/* Title */}
-              <h3 className="font-serif text-2xl font-bold text-card-foreground">
+              <h3 className="mb-3 font-serif text-2xl font-bold text-card-foreground lg:text-3xl">
                 {service.title}
               </h3>
 
               {/* Description */}
-              <p className="mt-4 text-base leading-relaxed text-[#333333]">
+              <p className="mb-6 text-[15px] leading-relaxed text-[#333333] lg:text-base">
                 {service.description}
               </p>
 
               {/* Bullet points */}
-              <ul className="mt-6 flex flex-1 flex-col gap-3">
+              <ul className="mb-8 flex flex-1 flex-col gap-4">
                 {service.bullets.map((bullet) => (
-                  <li key={bullet} className="flex items-center gap-3 text-base">
-                    <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${service.bulletColor}`} />
+                  <li key={bullet} className="flex items-start gap-3 text-[14px] leading-snug lg:text-[15px]">
+                    <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${service.bulletColor}`} />
                     <span className="text-[#333333]">{bullet}</span>
                   </li>
                 ))}
               </ul>
 
               {/* Price or CTA */}
-              {service.price ? (
-                <div className="mt-8 flex items-center gap-2">
-                  <span className="font-serif text-4xl font-bold text-secondary">
-                    {service.price}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{service.priceLabel}</span>
+              <div className="mt-auto">
+                {service.price ? (
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif text-3xl font-bold text-secondary lg:text-4xl">
+                      {service.price}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      <span>{service.priceLabel}</span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <Link
-                  href={WS_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-6 block rounded-full border-2 border-accent/40 py-3 text-center text-sm font-medium text-accent transition-colors hover:bg-accent/10"
-                >
-                  {service.ctaLabel}
-                </Link>
-              )}
+                ) : (
+                  <Link
+                    href={WS_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-full border-2 border-accent/40 py-2.5 text-center text-sm font-medium text-accent transition-colors hover:bg-accent/10"
+                  >
+                    {service.ctaLabel}
+                  </Link>
+                )}
+              </div>
             </div>
           ))}
         </div>
