@@ -12,8 +12,8 @@ export function Header() {
 
   const navLinks: { label: string; href: string; external?: boolean }[] = [
     { label: "Inicio", href: "/#inicio" },
-    { label: "Sobre mi", href: "/#sobre-mi" },
-    { label: "Areas de trabajo", href: "/#areas" },
+    { label: "Sobre mí", href: "/#sobre-mi" },
+    { label: "Áreas de trabajo", href: "/#areas" },
     { label: "Agendar cita", href: "/#agendar" },
   ]
 

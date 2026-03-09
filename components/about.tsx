@@ -28,7 +28,7 @@ export function About() {
           <div className="relative w-full md:w-5/12 lg:w-[40%] flex-shrink-0">
             <div className="h-[400px] w-full overflow-hidden rounded-[2rem] md:h-full">
               <Image
-                src="/images/hero-diplomas.jpg"
+                src="/images/IMG_2590 (1).jpg"
                 alt="Maria Fernanda Azcunes con sus titulos profesionales"
                 width={600}
                 height={800}
@@ -50,7 +50,7 @@ algo mucho más profundo:{" "}
                 <span className="font-serif italic text-accent">mi proposito de vida</span>.
               </p>
               <p className="text-lg leading-relaxed text-foreground/80">
-                Hoy, <span className="font-serif italic text-primary">todo es un balance</span>{" "}
+                Hoy, <span className="font-serif italic text-[#a7896c]">todo es un balance</span>{" "}
                 es un espacio dedicado a ayudar a las personas a conocerse mejor, a mejorar
 la relación con ellos mismos, a amarse, descubrir su propósito de vida, mejorar sus relaciones
 interpersonales y a encontrar ese equilibrio y estabilidad mental y emocional que todos buscamos.

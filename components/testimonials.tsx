@@ -30,72 +30,24 @@ const testimonials = [
   },
   {
     quote:
-      "Aprendi a poner limites sin sentir culpa. El proceso con Maria Fernanda cambio mi forma de relacionarme conmigo misma y con los demas. Siento que recupere mi voz.",
-    author: "Laura M.",
+      "La terapia contigo fue fundamental, en ese periodo de mi vida donde necesitaba entender y reconstruirme emocionalmente. Escucharte, hacer las asignaciones para aprender y sanar poco a poco, me logró hacer entender que mi salud mental es valiosa. Siempre agradecida por tu ayuda, eres una excelente profesional!",
+    author: "M.L.",
     dotColor: "bg-[#b8d4e3]",
     blobColor: "bg-[#b8d4e3]/20",
     nameColor: "text-accent",
   },
   {
     quote:
-      "La terapia de parejas nos ayudo a comunicarnos de una manera completamente diferente. Estamos mas unidos que nunca. Aprendimos a escucharnos de verdad.",
-    author: "Carlos y Andrea",
+      "Me ha ayudado a identificar cada vez más rápido y de manera más consciente los errores que no quiero volver a cometer. Me han ayudado las herramientas que me has dado, a salir de las crisis yo sola, me han ayudado a calmarme. La terapia contigo me ha dado siempre una dirección, que se siente acompañada y segura.",
+    author: "Anónimo.",
     dotColor: "bg-primary/60",
     blobColor: "bg-primary/15",
     nameColor: "text-primary",
   },
   {
     quote:
-      "Nunca pense que podria gestionar mi ansiedad de esta forma. Hoy tengo herramientas reales para mis dias dificiles y la confianza de que puedo con lo que venga.",
-    author: "Valentina G.",
-    dotColor: "bg-secondary/70",
-    blobColor: "bg-secondary/15",
-    nameColor: "text-secondary",
-  },
-  {
-    quote:
-      "Maria Fernanda me ayudo a entender que pedir ayuda no es debilidad. Hoy vivo con mucha mas claridad emocional. Cada sesion fue un paso hacia una version mas autentica de mi.",
-    author: "Daniel P.",
-    dotColor: "bg-[#b8d4e3]",
-    blobColor: "bg-[#b8d4e3]/20",
-    nameColor: "text-accent",
-  },
-  {
-    quote:
-      "El acompanamiento fue increible desde el primer dia. Siento que encontre un espacio seguro donde puedo ser yo misma sin miedo a ser juzgada. Gracias infinitas.",
-    author: "Camila T.",
-    dotColor: "bg-primary/60",
-    blobColor: "bg-primary/15",
-    nameColor: "text-primary",
-  },
-  {
-    quote:
-      "Despues de anos de cargar con inseguridades, por fin pude trabajar mi autoestima de raiz. Estoy muy agradecida por este proceso transformador.",
-    author: "Ana L.",
-    dotColor: "bg-secondary/70",
-    blobColor: "bg-secondary/15",
-    nameColor: "text-secondary",
-  },
-  {
-    quote:
-      "La terapia online me dio la flexibilidad que necesitaba sin perder la calidad del acompanamiento. Desde cualquier lugar me senti contenida y escuchada.",
-    author: "Marco R.",
-    dotColor: "bg-[#b8d4e3]",
-    blobColor: "bg-[#b8d4e3]/20",
-    nameColor: "text-accent",
-  },
-  {
-    quote:
-      "Me ayudo a sanar heridas que no sabia que seguian abiertas. Hoy me siento mas liviana y en paz conmigo misma. La terapia fue un regalo que me di.",
-    author: "Isabella F.",
-    dotColor: "bg-primary/60",
-    blobColor: "bg-primary/15",
-    nameColor: "text-primary",
-  },
-  {
-    quote:
-      "Empece la terapia con muchas dudas y hoy puedo decir que fue la mejor decision que he tomado en mucho tiempo. Mi vida cambio de una forma que no imaginaba.",
-    author: "Gabriela S.",
+      "El primer momento que compartí en terapia contigo, me invadió la sensación de paz y seguridad que sentí. Aprendí a que yo no soy mi enemigo, si cometo un error es porque soy humano y puedo aprender y mejorar. Aprendí a no tratarme mal, aprendí a controlar la voz en mi cabeza, aprendí que si perdono y doy oportunidades es por mi capacidad de amar tan grande y sincera, y que no debo castigarme por eso.",
+    author: "J.L.",
     dotColor: "bg-secondary/70",
     blobColor: "bg-secondary/15",
     nameColor: "text-secondary",
