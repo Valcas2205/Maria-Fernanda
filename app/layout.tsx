@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Cormorant_Garamond, Abhaya_Libre } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { CookieBanner } from '@/components/cookie-banner'
 import './globals.css'
 
 const abhaya = Abhaya_Libre({
@@ -33,11 +34,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${abhaya.variable} ${cormorant.variable}`}>
+      <html lang="es" className={`${abhaya.variable} ${cormorant.variable} scroll-smooth scroll-pt-20`}>
       <body className="font-sans antialiased">
         {children}
+        <CookieBanner />
         <Analytics />
       </body>
     </html>
   )
 }
+

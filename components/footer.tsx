@@ -52,9 +52,9 @@ const socialLinks = [
 ]
 
 const legalLinks = [
-  { label: "Politica de Privacidad", href: "#" },
-  { label: "Terminos y Condiciones", href: "#" },
-  { label: "Aviso Legal", href: "#" },
+  { label: "Política de Privacidad", href: "/politica-de-privacidad" },
+  { label: "Términos y Condiciones", href: "/terminos-y-condiciones" },
+  { label: "Aviso Legal", href: "/aviso-legal" },
 ]
 
 export function Footer() {
@@ -72,7 +72,7 @@ export function Footer() {
               height={36}
               className="h-8 w-auto"
             />
-            <p className="font-serif text-sm italic text-[#1a1a1a]/60">
+            <p className="font-serif text-base italic text-[#1a1a1a]/80">
               Psicologia clinica con enfoque practico y empatico
             </p>
           </div>
@@ -103,12 +103,12 @@ export function Footer() {
           </div>
 
           {/* Right: Legal links */}
-          <div className="flex flex-col items-start gap-2 md:items-end">
+          <div className="flex flex-col items-start gap-4 md:items-end">
             {legalLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm text-[#1a1a1a]/50 transition-colors hover:text-[#1a1a1a]/80"
+                className="font-serif text-lg font-medium text-primary transition-colors hover:text-secondary lg:text-xl"
               >
                 {link.label}
               </Link>
@@ -118,7 +118,7 @@ export function Footer() {
 
         {/* Divider + copyright */}
         <div className="mt-10 border-t border-border/40 pt-6">
-          <p className="text-center text-sm text-[#1a1a1a]/40">
+          <p className="text-center text-base text-[#1a1a1a]/60">
             {"© 2026 Todo es un Balance · Maria Fernanda Azcunes. Todos los derechos reservados."}
           </p>
         </div>

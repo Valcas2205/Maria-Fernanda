@@ -10,19 +10,19 @@ const WS_LINK = "https://wa.me/584245414804?text=Hola%2C%20me%20gustaria%20agend
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const navLinks = [
-    { label: "Inicio", href: "#inicio" },
-    { label: "Sobre mi", href: "#sobre-mi" },
-    { label: "Areas de trabajo", href: "#areas" },
-    { label: "Agendar cita", href: WS_LINK, external: true },
+  const navLinks: { label: string; href: string; external?: boolean }[] = [
+    { label: "Inicio", href: "/#inicio" },
+    { label: "Sobre mí", href: "/#sobre-mi" },
+    { label: "Áreas de trabajo", href: "/#areas" },
+    { label: "Agendar cita", href: "/#agendar" },
   ]
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="#inicio" className="flex-shrink-0">
+        <Link href="/#inicio" className="flex-shrink-0">
           <Image
-            src="/images/logo.png"
+            src="/images/brand-logo.png"
             alt="Todo es un balance"
             width={220}
             height={44}
@@ -37,7 +37,7 @@ export function Header() {
               key={link.label}
               href={link.href}
               {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="text-sm font-medium text-[#1a1a1a] transition-colors hover:text-primary"
+              className="text-base font-semibold text-[#1a1a1a]/90 transition-colors hover:text-primary"
             >
               {link.label}
             </Link>
@@ -46,7 +46,7 @@ export function Header() {
             href={WS_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-secondary px-6 py-2.5 text-sm font-semibold text-[#ffffff] transition-opacity hover:opacity-90"
+            className="rounded-full bg-secondary px-6 py-2.5 text-base font-bold text-[#ffffff] transition-opacity hover:opacity-90"
           >
             {"Te esperamos!"}
           </Link>
@@ -71,7 +71,7 @@ export function Header() {
               href={link.href}
               {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               onClick={() => setMobileOpen(false)}
-              className="text-base font-medium text-[#1a1a1a] transition-colors hover:text-primary"
+              className="text-lg font-bold text-[#1a1a1a] transition-colors hover:text-primary"
             >
               {link.label}
             </Link>
@@ -81,7 +81,7 @@ export function Header() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMobileOpen(false)}
-            className="mt-2 rounded-full bg-secondary px-5 py-2.5 text-center text-sm font-semibold text-[#ffffff] transition-opacity hover:opacity-90"
+            className="mt-2 rounded-full bg-secondary px-5 py-3 text-center text-base font-bold text-[#ffffff] transition-opacity hover:opacity-90"
           >
             {"Te esperamos!"}
           </Link>

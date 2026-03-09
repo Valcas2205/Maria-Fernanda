@@ -5,75 +5,78 @@ const credentials = [
   {
     icon: GraduationCap,
     title: "Licenciada en Psicologia",
-    year: "2022",
+    year: "Universidad Yacambú, 2022.",
   },
   {
     icon: Award,
     title: "Master en Psicologia Clinica y de la Salud",
-    subtitle: "ISEP, Espana",
+    subtitle: "ISEP, España. 2024.",
   },
   {
     icon: BookOpen,
-    title: "Especializacion en Psicoterapia Cognitivo Conductual",
-    subtitle: "",
+    title: "Psicoterapeuta Cognitivo Conductual.",
+    subtitle: "ISEP, España. 2024.",
   },
 ]
 
 export function About() {
   return (
-    <section id="sobre-mi" className="relative overflow-hidden py-16 md:py-24">
+    <section id="sobre-mi" className="relative overflow-hidden py-10 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
-        {/* Name heading */}
-        <h2 className="mb-10 font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl lg:text-5xl">
-          Psic. Maria Fernanda Azcunes
-        </h2>
-
         <div className="flex flex-col gap-10 md:flex-row md:gap-14">
           {/* Image - left column */}
-          <div className="relative flex-shrink-0">
-            <div className="overflow-hidden rounded-[2rem]">
+          <div className="relative w-full md:w-5/12 lg:w-[40%] flex-shrink-0">
+            <div className="h-[400px] w-full overflow-hidden rounded-[2rem] md:h-full">
               <Image
-                src="/images/hero-diplomas.jpg"
+                src="/images/IMG_2590 (1).jpg"
                 alt="Maria Fernanda Azcunes con sus titulos profesionales"
-                width={400}
-                height={520}
-                className="h-auto w-full max-w-[400px] object-cover"
+                width={600}
+                height={800}
+                className="h-full w-full object-cover object-center"
               />
             </div>
           </div>
 
           {/* Text + Credentials - right column */}
           <div className="flex flex-1 flex-col gap-6">
+            <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+              Psic. Maria Fernanda Azcunes
+            </h2>
             <div className="flex flex-col gap-4">
               <p className="text-lg leading-relaxed text-foreground/80">
-                Todo comenzo en 2020, cuando este proyecto nacio como un blog psicoeducativo. Lo que inicio como una manera de compartir conocimiento se transformo en algo mucho mas profundo:{" "}
+                Todo es un balance comenzó en el 2020 durante pandemia, mientras cursaba la universidad, como un
+blog psicoeducativo. Lo que inició como una manera de compartir conocimientos se transformó en
+algo mucho más profundo:{" "}
                 <span className="font-serif italic text-accent">mi proposito de vida</span>.
               </p>
               <p className="text-lg leading-relaxed text-foreground/80">
-                Hoy, <span className="font-serif italic text-primary">todo es un balance</span>{" "}
-                es un espacio dedicado a ayudar a las personas a conocerse mejor, a mejorar la relacion consigo mismas y a encontrar ese equilibrio que todos buscamos.
+                Hoy, <span className="font-serif italic text-[#a7896c]">todo es un balance</span>{" "}
+                es un espacio dedicado a ayudar a las personas a conocerse mejor, a mejorar
+la relación con ellos mismos, a amarse, descubrir su propósito de vida, mejorar sus relaciones
+interpersonales y a encontrar ese equilibrio y estabilidad mental y emocional que todos buscamos.
               </p>
               <p className="text-lg leading-relaxed text-foreground/80">
-                Creo profundamente en que la terapia es un acto de valentia, y me siento honrada cada vez que alguien me permite acompanarle en su proceso.
+                Creo profundamente en que la terapia es un acto de amor propio. Para mi es un placer poder
+acompañar a cada uno de mis pacientes en su viaje al bienestar.
               </p>
             </div>
 
             {/* Credentials inline - compact, right after the text */}
-            <div className="mt-1">
-              <h3 className="mb-3 font-serif text-xl font-light text-foreground">
+            <div className="mt-2">
+              <h3 className="mb-4 font-serif text-2xl font-bold text-foreground">
                 Respaldo Profesional
               </h3>
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-3">
                 {credentials.map((cred) => (
                   <div
                     key={cred.title}
-                    className="flex items-center gap-3 rounded-xl bg-card/70 px-4 py-3 backdrop-blur-sm"
+                    className="flex items-center gap-4 rounded-xl bg-card/70 px-5 py-4 backdrop-blur-sm transition-colors hover:bg-card/90"
                   >
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
-                      <cred.icon className="h-4 w-4 text-primary" />
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary/20 shadow-sm">
+                      <cred.icon className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-card-foreground leading-tight">
+                      <h4 className="text-base font-bold text-card-foreground leading-tight">
                         {cred.title}
                       </h4>
                       {cred.subtitle && (
