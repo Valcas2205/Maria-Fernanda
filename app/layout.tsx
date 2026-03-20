@@ -19,9 +19,33 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: 'Todo es un Balance | Maria Fernanda Azcunes - Psicologia',
+  metadataBase: new URL('https://www.todoesunbalance.com'),
+  title: {
+    default: 'Psicóloga en Barquisimeto | Maria Fernanda Azcunes',
+    template: '%s | Maria Fernanda Azcunes - Todo es un Balance',
+  },
   description:
-    'Espacio de psicologia clinica con Maria Fernanda Azcunes. Terapia individual, de parejas, ansiedad, autoestima y mas.',
+    'Psicóloga clínica en Barquisimeto, Maria Fernanda Azcunes. Terapia presencial y online para adultos y parejas. Especializada en ansiedad, autoestima y bienestar emocional.',
+  keywords: [
+    'Psicóloga en Barquisimeto',
+    'Psicóloga clínica Barquisimeto',
+    'Terapia presencial Barquisimeto',
+    'Terapia de parejas Barquisimeto',
+    'Psicoterapeuta Barquisimeto',
+    'Maria Fernanda Azcunes',
+    'Todo es un balance',
+    'Terapia online',
+  ],
+  authors: [{ name: 'Maria Fernanda Azcunes' }],
+  creator: 'Maria Fernanda Azcunes',
+  openGraph: {
+    type: 'website',
+    locale: 'es_VE',
+    url: 'https://www.todoesunbalance.com',
+    title: 'Psicóloga en Barquisimeto | Maria Fernanda Azcunes',
+    description: 'Terapia presencial en Barquisimeto y online para adultos y parejas. Encuentra tu balance con Maria Fernanda Azcunes.',
+    siteName: 'Todo es un Balance',
+  },
 }
 
 export const viewport: Viewport = {
