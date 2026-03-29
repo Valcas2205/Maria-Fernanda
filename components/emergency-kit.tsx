@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Download, Heart, Loader2, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -8,6 +8,16 @@ export function EmergencyKit() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+
+  useEffect(() => {
+    if (isSuccess) {
+      const timer = setTimeout(() => {
+        setIsSuccess(false)
+        setEmail("")
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [isSuccess])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,15 +38,14 @@ export function EmergencyKit() {
 
       // Trigger download
       const link = document.createElement("a")
-      link.href = "/BOTIQUÍN EMOCIONAL.pdf"
-      link.download = "BOTIQUÍN EMOCIONAL.pdf"
+      link.href = "/botiquin-emocional.pdf"
+      link.download = "Botiquin-de-Emergencia-Emocional.pdf"
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
 
       setIsSuccess(true)
       toast.success("¡Registro exitoso! Tu descarga ha comenzado.")
-      setEmail("")
     } catch (error) {
       console.error(error)
       toast.error("Hubo un problema al registrar tu correo. Inténtalo de nuevo.")
@@ -68,12 +77,6 @@ export function EmergencyKit() {
               <div className="flex flex-col items-center gap-2 text-[#DF9A8F]">
                 <CheckCircle2 className="h-10 w-10" />
                 <p className="font-medium text-lg">¡Gracias! El archivo se está descargando.</p>
-                <button 
-                  onClick={() => setIsSuccess(false)}
-                  className="mt-4 text-sm underline text-[#4a5568]"
-                >
-                  Descargar de nuevo
-                </button>
               </div>
             ) : (
               <form
@@ -113,4 +116,3 @@ export function EmergencyKit() {
     </section>
   )
 }
-
