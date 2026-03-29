@@ -1,30 +1,43 @@
-import { sql } from "@vercel/postgres";
+import { Pool } from "pg";
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET(request: Request) {
-  // Add authentication check for cron job (optional but recommended)
+  // Authentication check for cron job
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
 
   try {
-    // Get leads from the last 7 days
-    const { rows } = await sql`
-      SELECT email, created_at
-      FROM leads
-      WHERE created_at >= NOW() - INTERVAL '7 days'
-      ORDER BY created_at DESC;
-    `;
+    const client = await pool.connect();
+    let rows: { email: string; created_at: string | Date }[] = [];
+    try {
+      const result = await client.query(`
+        SELECT email, created_at
+        FROM leads
+        WHERE created_at >= NOW() - INTERVAL '7 days'
+        ORDER BY created_at DESC;
+      `);
+      rows = result.rows;
+    } finally {
+      client.release();
+    }
 
     if (rows.length === 0) {
       return NextResponse.json({ message: "Sin nuevos leads esta semana" });
     }
 
-    const leadListHtml = (rows as { email: string; created_at: string | Date }[])
+    const leadListHtml = rows
       .map(
         (lead) => `
       <tr>
@@ -58,23 +71,17 @@ export async function GET(request: Request) {
       </div>
     `;
 
-    if (!process.env.RESEND_API_KEY) {
-      console.log("--- MODO PRUEBA (Sin Resend API Key) ---");
-      console.log("Destinatario:", process.env.NOTIFICATION_EMAIL || "admin@example.com");
-      console.log("Contenido del Email:", emailHtml);
-      return NextResponse.json({ message: "Lead list logged to console (Mock mode)", count: rows.length });
-    }
-
     await resend.emails.send({
       from: "Maria Fernanda <hola@todoesunbalance.com>",
-      to: [process.env.NOTIFICATION_EMAIL || "admin@example.com"],
+      to: [process.env.NOTIFICATION_EMAIL || "todoesunbalance@gmail.com"],
       subject: "Resumen Semanal: Botiquín de Emergencia Emocional",
       html: emailHtml,
     });
 
     return NextResponse.json({ message: "Resumen enviado", count: rows.length });
-  } catch (error) {
-    console.error("Error in cron job:", error);
-    return NextResponse.json({ error: "Error al procesar el cron job" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Error in cron job:", message);
+    return NextResponse.json({ error: "Error al procesar el cron job", detail: message }, { status: 500 });
   }
 }
