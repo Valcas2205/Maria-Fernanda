@@ -20,7 +20,18 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/#inicio" className="flex-shrink-0">
+        <Link 
+          href="/#inicio" 
+          className="flex-shrink-0"
+          onClick={(e) => {
+            if (window.location.pathname === "/") {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              window.history.pushState(null, "", "/#inicio");
+              setMobileOpen(false);
+            }
+          }}
+        >
           <Image
             src="/images/brand-logo.png"
             alt="Todo es un balance"
@@ -37,6 +48,18 @@ export function Header() {
               key={link.label}
               href={link.href}
               {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              onClick={(e) => {
+                if (link.href.startsWith("/#") && window.location.pathname === "/") {
+                  e.preventDefault();
+                  const id = link.href.replace("/#", "");
+                  if (id === "inicio") {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  } else {
+                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+                  }
+                  window.history.pushState(null, "", link.href);
+                }
+              }}
               className="text-base font-semibold text-[#1a1a1a]/90 transition-colors hover:text-primary"
             >
               {link.label}
@@ -70,7 +93,19 @@ export function Header() {
               key={link.label}
               href={link.href}
               {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              onClick={() => setMobileOpen(false)}
+              onClick={(e) => {
+                setMobileOpen(false);
+                if (link.href.startsWith("/#") && window.location.pathname === "/") {
+                  e.preventDefault();
+                  const id = link.href.replace("/#", "");
+                  if (id === "inicio") {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  } else {
+                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+                  }
+                  window.history.pushState(null, "", link.href);
+                }
+              }}
               className="text-lg font-bold text-[#1a1a1a] transition-colors hover:text-primary"
             >
               {link.label}

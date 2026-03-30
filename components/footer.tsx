@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { Mail } from "lucide-react"
@@ -65,27 +67,49 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:items-center">
           {/* Left: Logo + tagline */}
           <div className="flex flex-col items-start gap-3">
-            <Image
-              src="/images/logo.png"
-              alt="Todo es un balance"
-              width={180}
-              height={36}
-              className="h-8 w-auto"
-            />
+            <Link 
+              href="/#inicio"
+              onClick={(e) => {
+                if (window.location.pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  window.history.pushState(null, "", "/#inicio");
+                }
+              }}
+            >
+              <Image
+                src="/images/logo.png"
+                alt="Todo es un balance"
+                width={180}
+                height={36}
+                className="h-8 w-auto cursor-pointer"
+              />
+            </Link>
             <p className="font-serif text-base italic text-[#1a1a1a]/80">
-              Psicologia clinica con enfoque practico y empatico
+              Psicología clínica con enfoque práctico y empático
             </p>
           </div>
 
           {/* Center: Seal + Social icons stacked */}
           <div className="flex flex-col items-center gap-5">
-            <Image
-              src="/images/sello.png"
-              alt="Todo es un balance - Psic. Maria Fernanda Azcunes"
-              width={100}
-              height={100}
-              className="h-20 w-20"
-            />
+            <Link 
+              href="/#inicio"
+              onClick={(e) => {
+                if (window.location.pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  window.history.pushState(null, "", "/#inicio");
+                }
+              }}
+            >
+              <Image
+                src="/images/sello.png"
+                alt="Todo es un balance - Psic. María Fernanda Azcunes"
+                width={100}
+                height={100}
+                className="h-20 w-20 cursor-pointer"
+              />
+            </Link>
             <div className="flex items-center gap-3">
               {socialLinks.map((social) => (
                 <Link
@@ -119,7 +143,7 @@ export function Footer() {
         {/* Divider + copyright */}
         <div className="mt-10 border-t border-border/40 pt-6">
           <p className="text-center text-base text-[#1a1a1a]/60">
-            {"© 2026 Todo es un Balance · Maria Fernanda Azcunes. Todos los derechos reservados."}
+            {"© 2026 Todo es un Balance · María Fernanda Azcunes. Todos los derechos reservados."}
           </p>
         </div>
       </div>

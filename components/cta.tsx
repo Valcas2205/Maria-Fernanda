@@ -27,7 +27,7 @@ export function CTA() {
               El primer paso es decidirte
             </h2>
             <p className="mb-8 text-xl leading-relaxed text-foreground/90">
-              Agenda tu primera cita y comienza tu camino hacia el bienestar. Estoy aqui para acompañarte.
+              Agenda tu primera cita y comienza tu camino hacia el bienestar. Estoy aquí para acompañarte.
             </p>
             <Link
               href={WS_LINK}
@@ -52,7 +52,7 @@ export function CTA() {
               <div className="relative z-10 aspect-[3/4] w-full overflow-hidden rounded-[2rem] shadow-2xl shadow-primary/10">
                 <Image
                   src="/images/Invitación Cuadrada Bautismo Acuarela Rosa-2.png"
-                  alt="Maria Fernanda, el primer paso es decidirte"
+                  alt="María Fernanda, el primer paso es decidirte"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
