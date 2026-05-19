@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Cormorant_Garamond, Abhaya_Libre } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { CookieBanner } from '@/components/cookie-banner'
+import { CartProvider } from '@/lib/cart-context'
+import { CartDrawer } from '@/components/store/cart-drawer'
 import './globals.css'
 
 const abhaya = Abhaya_Libre({
@@ -60,9 +62,12 @@ export default function RootLayout({
   return (
       <html lang="es" className={`${abhaya.variable} ${cormorant.variable} scroll-smooth scroll-pt-20`}>
       <body className="font-sans antialiased">
-        {children}
-        <CookieBanner />
-        <Analytics />
+        <CartProvider>
+          {children}
+          <CartDrawer />
+          <CookieBanner />
+          <Analytics />
+        </CartProvider>
       </body>
     </html>
   )

@@ -9,14 +9,14 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function GET(request: Request) {
   // Authentication check for cron job
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const client = await pool.connect();
