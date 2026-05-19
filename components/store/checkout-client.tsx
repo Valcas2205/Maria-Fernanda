@@ -33,6 +33,7 @@ export function CheckoutClient() {
 
   const [form, setForm] = useState({
     name: "",
+    email: "",
     address: "",
     city: "",
     state: "",
