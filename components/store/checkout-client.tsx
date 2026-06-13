@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ShieldCheck, ArrowLeft, Loader2, Tablet, BookOpen, CreditCard, Lock } from "lucide-react"
+import {
+  issueCheckoutTokenAction,
+  upsertCheckoutCustomerAction,
+  submitCheckoutPaymentAction,
+} from "@/lib/payments/actions"
 
 export function CheckoutClient() {
   const { items, total, clearCart } = useCart()
@@ -58,27 +63,65 @@ export function CheckoutClient() {
     setError("")
     setLoading(true)
     try {
-      const res = await fetch("/api/checkout/manual", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const { token } = await issueCheckoutTokenAction({
+        subscriptionId: "cart",
+        timePeriod: "one-time",
+        surface: "cart",
+        amountUsd: total,
+      })
+
+      // ====================================================================
+      // 🚨 TODO: MEJORAR VALIDACIÓN EN FRONTEND 🚨
+      // ====================================================================
+      // Actualmente el FE tiene campos sueltos que no empatan 1:1 con el 
+      // esquema estricto de WaaS (UpsertPaymentCustomerDto). 
+      // Tareas pendientes:
+      // 1. Separar "Nombre Completo" en "Nombre" y "Apellido" (obligatorios).
+      // 2. Hacer obligatorio el teléfono y validar que tenga al menos 6 caracteres.
+      // 3. (Opcional) Validar la dirección mínima.
+      // ====================================================================
+      const parts = form.name.trim().split(" ")
+      const firstName = parts[0] || "Cliente"
+      const lastName = parts.slice(1).join(" ") || "-" // Fallback para pasar validación BE
+      const location = [form.address, form.city, form.state, form.country].filter(Boolean).join(", ")
+      // BE exige teléfono de min 6 caracteres. Si el user lo deja vacío, pasamos un genérico
+      const phone = form.phone.trim().length >= 6 ? form.phone.trim() : "0000000"
+
+      const { customerId } = await upsertCheckoutCustomerAction(token, {
+        firstName,
+        lastName,
+        email: form.email,
+        phone,
+        location,
+      })
+
+      const paymentMethod = form.paymentMethod === "zelle" ? "zelle" : "pagomovil"
+
+      const metadata = {
           items: items.map((i) => ({
+            id: i.product.id,
             name: i.product.name,
             price: i.product.price,
             quantity: i.quantity,
           })),
-          customerInfo: form,
-        }),
-      })
-      const data = await res.json()
-      if (data.url) {
-        clearCart()
-        router.push(data.url)
-      } else {
-        setError("Ocurrió un error al procesar el pago. Intenta de nuevo.")
+          deliveryType: form.deliveryType,
+          agency: form.agency,
+          paymentReference: form.paymentReference
       }
-    } catch {
-      setError("No se pudo conectar al servidor. Intenta de nuevo.")
+
+      const { status } = await submitCheckoutPaymentAction(token, {
+        customerId,
+        method: paymentMethod,
+        amountUsd: total,
+        amountVes: bcvRate && paymentMethod === "pagomovil" ? total * bcvRate : undefined,
+        metadata,
+      })
+
+      clearCart()
+      router.push(`/thank-you?session=cart&status=${status}`)
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : "Ocurrió un error al procesar el pago. Intenta de nuevo.")
     } finally {
       setLoading(false)
     }
@@ -177,7 +220,7 @@ export function CheckoutClient() {
                   <h2 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-5">
                     Información de Envío
                   </h2>
-                  
+
                   <div className="mb-6 flex gap-4">
                     <label className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
                       form.deliveryType === "barquisimeto" ? "border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]" : "border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40"
@@ -262,7 +305,7 @@ export function CheckoutClient() {
                   </div>
                   <p className="mt-5 flex items-center gap-2 rounded-xl bg-[#A7895C]/10 px-4 py-3 text-xs text-[#5c4b32]">
                     <span>📦</span>
-                    {form.deliveryType === "barquisimeto" 
+                    {form.deliveryType === "barquisimeto"
                       ? "El costo del delivery se coordinará contigo por WhatsApp después de la compra."
                       : "Los envíos nacionales se realizan con Cobro en Destino (COD) por la agencia indicada."}
                   </p>

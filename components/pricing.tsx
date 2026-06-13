@@ -1,9 +1,23 @@
 import Link from "next/link"
-import { Clock, User, Users, BookOpen } from "lucide-react"
+import { Clock, User, Users, BookOpen, type LucideIcon } from "lucide-react"
 
 const WS_LINK = "https://wa.me/584245414804?text=Hola%2C%20me%20gustaria%20agendar%20una%20cita"
 
-const services = [
+type Service = {
+  icon: LucideIcon
+  iconColor: string
+  iconBg: string
+  title: string
+  description: string
+  bullets: string[]
+  price: string | null
+  priceLabel: string | null
+  bulletColor: string
+  subscriptionId?: string
+  ctaLabel?: string
+}
+
+const services: Service[] = [
   {
     icon: User,
     iconColor: "text-accent",
@@ -16,8 +30,9 @@ const services = [
       "Online en todo el mundo.",
       "Presencial en Barquisimeto, Venezuela.",
     ],
-    price: "€50",
+    price: "$50",
     priceLabel: "por sesión",
+    subscriptionId: "terapia-individual",
     bulletColor: "bg-accent",
   },
   {
@@ -32,8 +47,9 @@ const services = [
       "Online en todo el mundo.",
       "Presencial en Barquisimeto, Venezuela.",
     ],
-    price: "€70",
+    price: "$70",
     priceLabel: "por sesión",
+    subscriptionId: "terapia-parejas",
     bulletColor: "bg-secondary",
   },
   {
@@ -99,14 +115,24 @@ export function Pricing() {
               {/* Price or CTA */}
               <div className="mt-auto">
                 {service.price ? (
-                  <div className="flex items-center gap-2">
-                    <span className="font-serif text-3xl font-bold text-secondary lg:text-4xl">
-                      {service.price}
-                    </span>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      <span>{service.priceLabel}</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif text-3xl font-bold text-secondary lg:text-4xl">
+                        {service.price}
+                      </span>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        <span>{service.priceLabel}</span>
+                      </div>
                     </div>
+                    {service.subscriptionId ? (
+                      <Link
+                        href={`/checkout?id=${service.subscriptionId}&surface=pricing`}
+                        className="block rounded-full bg-secondary py-2.5 text-center text-sm font-medium text-secondary-foreground transition-opacity hover:opacity-90"
+                      >
+                        Reservar y pagar
+                      </Link>
+                    ) : null}
                   </div>
                 ) : (
                   <Link
