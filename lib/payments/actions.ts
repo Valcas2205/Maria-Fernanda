@@ -28,7 +28,10 @@ export async function issueCheckoutTokenAction(input: {
   const apiUrl = getApiBaseUrl()
   const res = await fetch(`${apiUrl}/payments/checkout-token`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-waas-internal-secret": process.env.WAAS_INTERNAL_SECRET!
+    },
     cache: "no-store",
     body: JSON.stringify({ ...input, domain: getCheckoutDomain() }),
   })
@@ -47,7 +50,12 @@ export async function getCheckoutContextAction(
     `${apiUrl}/payments/checkout-context` +
     `?token=${encodeURIComponent(token)}` +
     `&domain=${encodeURIComponent(domain)}`
-  const res = await fetch(url, { cache: "no-store" })
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      "x-waas-internal-secret": process.env.WAAS_INTERNAL_SECRET!
+    }
+  })
   if (!res.ok) {
     throw new Error(await parseError(res))
   }
@@ -61,7 +69,10 @@ export async function upsertCheckoutCustomerAction(
   const apiUrl = getApiBaseUrl()
   const res = await fetch(`${apiUrl}/payments/customers/upsert`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-waas-internal-secret": process.env.WAAS_INTERNAL_SECRET!
+    },
     cache: "no-store",
     body: JSON.stringify({ token, domain: getCheckoutDomain(), ...payload }),
   })
@@ -78,7 +89,10 @@ export async function submitCheckoutPaymentAction(
   const apiUrl = getApiBaseUrl()
   const res = await fetch(`${apiUrl}/payments/submit`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-waas-internal-secret": process.env.WAAS_INTERNAL_SECRET!
+    },
     cache: "no-store",
     body: JSON.stringify({ token, domain: getCheckoutDomain(), ...payload }),
   })
