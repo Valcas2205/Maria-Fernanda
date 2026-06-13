@@ -39,5 +39,7 @@ export interface ContactPayload {
 export interface PaymentPayload {
   customerId: string
   method: PaymentMethod
+  amountUsd?: number
+  amountVes?: number
   metadata?: Record<string, unknown>
 }

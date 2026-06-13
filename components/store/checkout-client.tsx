@@ -73,8 +73,8 @@ export function CheckoutClient() {
       // ====================================================================
       // 🚨 TODO: MEJORAR VALIDACIÓN EN FRONTEND 🚨
       // ====================================================================
-      // Actualmente el FE tiene campos sueltos que no empatan 1:1 con el 
-      // esquema estricto de WaaS (UpsertPaymentCustomerDto). 
+      // Actualmente el FE tiene campos sueltos que no empatan 1:1 con el
+      // esquema estricto de WaaS (UpsertPaymentCustomerDto).
       // Tareas pendientes:
       // 1. Separar "Nombre Completo" en "Nombre" y "Apellido" (obligatorios).
       // 2. Hacer obligatorio el teléfono y validar que tenga al menos 6 caracteres.
