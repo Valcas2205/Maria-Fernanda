@@ -85,7 +85,7 @@ export async function upsertCheckoutCustomerAction(
 export async function submitCheckoutPaymentAction(
   token: string,
   payload: PaymentPayload,
-): Promise<{ paymentId: string; status: "pending" | "approved" }> {
+): Promise<{ paymentId: string; status: "pending" | "verifying" | "approved" }> {
   const apiUrl = getApiBaseUrl()
   const res = await fetch(`${apiUrl}/payments/submit`, {
     method: "POST",

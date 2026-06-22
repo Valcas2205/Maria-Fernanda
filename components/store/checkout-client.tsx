@@ -48,6 +48,7 @@ export function CheckoutClient() {
     country: "Venezuela",
     paymentMethod: "pago_movil",
     paymentReference: "",
+    senderId: "",
   })
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -106,19 +107,21 @@ export function CheckoutClient() {
           })),
           deliveryType: form.deliveryType,
           agency: form.agency,
-          paymentReference: form.paymentReference
+          paymentReference: form.paymentReference,
+          senderId: form.senderId
       }
 
-      const { status } = await submitCheckoutPaymentAction(token, {
+      const { status, paymentId } = await submitCheckoutPaymentAction(token, {
         customerId,
         method: paymentMethod,
         amountUsd: total,
         amountVes: bcvRate && paymentMethod === "pagomovil" ? total * bcvRate : undefined,
         metadata,
+        status: "verifying",
       })
 
       clearCart()
-      router.push(`/thank-you?session=cart&status=${status}`)
+      router.push(`/thank-you?session=cart&status=${status}&paymentId=${paymentId}`)
     } catch (err) {
       console.error(err)
       setError(err instanceof Error ? err.message : "Ocurrió un error al procesar el pago. Intenta de nuevo.")
@@ -374,6 +377,25 @@ export function CheckoutClient() {
                     Realiza el pago al método seleccionado y coloca el número de referencia aquí.
                   </p>
                 </div>
+
+                <div className="flex flex-col gap-1.5 mt-4">
+                  <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="senderId">
+                    Cédula de Identidad (Titular de la cuenta) *
+                  </label>
+                  <input
+                    id="senderId"
+                    name="senderId"
+                    type="text"
+                    required
+                    value={form.senderId}
+                    onChange={handleChange}
+                    placeholder="Ej: V-12345678 o 12345678"
+                    className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  />
+                  <p className="text-xs text-[#5c4b32]/60 mt-1">
+                    Necesitamos tu cédula para que nuestro sistema valide el pago automáticamente.
+                  </p>
+                </div>
               </div>
 
               {error && (
@@ -460,8 +482,8 @@ export function CheckoutClient() {
                 </button>
 
                 <div className="mt-4 flex flex-col gap-1 items-center justify-center text-xs text-[#5c4b32]/70 text-center">
-                  <p>Al confirmar el pedido, revisaremos tu pago manualmente.</p>
-                  <p>Recibirás un correo de confirmación y tus productos.</p>
+                  <p>Al confirmar el pedido, nuestro sistema validará tu pago automáticamente.</p>
+                  <p>Por favor mantén esta ventana abierta.</p>
                 </div>
               </div>
             </motion.div>

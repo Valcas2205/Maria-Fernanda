@@ -42,4 +42,5 @@ export interface PaymentPayload {
   amountUsd?: number
   amountVes?: number
   metadata?: Record<string, unknown>
+  status?: "pending" | "verifying" | "approved" | "rejected"
 }
