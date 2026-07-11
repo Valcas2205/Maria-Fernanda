@@ -13,6 +13,7 @@ export interface Product {
   features: string[]
   badge: string
   featured?: boolean
+  fileName?: string
 }
 
 export const products: Product[] = [
@@ -58,6 +59,7 @@ export const products: Product[] = [
       "Acceso permanente",
     ],
     badge: "E-Book",
+    fileName: "guia-asertividad.pdf",
   },
   {
     id: "3",
@@ -79,6 +81,7 @@ export const products: Product[] = [
       "Descarga inmediata tras el pago",
     ],
     badge: "E-Book",
+    fileName: "guia-de-autocuidado.pdf",
   },
   {
     id: "4",
@@ -100,6 +103,7 @@ export const products: Product[] = [
       "Descarga inmediata tras el pago",
     ],
     badge: "E-Book",
+    fileName: "diario-de-bienestar.pdf",
   },
 ]
 

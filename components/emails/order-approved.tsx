@@ -15,12 +15,16 @@ interface OrderApprovedEmailProps {
   firstName: string;
   orderId: string;
   items: Array<{ name: string; quantity: number; price?: number }>;
+  hasDigitalAttachments?: boolean;
+  hasPhysicalItems?: boolean;
 }
 
 export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = ({
   firstName,
   orderId,
   items,
+  hasDigitalAttachments = false,
+  hasPhysicalItems = false,
 }) => {
   return (
     <Html>
@@ -39,7 +43,13 @@ export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = (
           <Section style={alertCard}>
             <Heading as="h2" style={alertHeading}>¡Gracias por tu compra!</Heading>
             <Text style={alertText}>
-              Tus productos o servicios te serán enviados muy pronto. Por ahora, nos encontramos enviando el material o los accesos manualmente, así que por favor mantente atento(a) a tu bandeja de entrada en las próximas horas.
+              {hasDigitalAttachments && hasPhysicalItems ? (
+                "¡Buenas noticias! Los productos digitales que adquiriste se encuentran adjuntos a este correo en formato PDF para que los descargues de inmediato. Tus productos físicos se encuentran en preparación y te notificaremos pronto sobre su envío."
+              ) : hasDigitalAttachments && !hasPhysicalItems ? (
+                "¡Buenas noticias! Los productos digitales que adquiriste se encuentran adjuntos a este correo en formato PDF para que los descargues de inmediato."
+              ) : (
+                "Tus productos o servicios te serán enviados muy pronto. Por ahora, nos encontramos enviando el material o los accesos manualmente, así que por favor mantente atento(a) a tu bandeja de entrada en las próximas horas."
+              )}
             </Text>
           </Section>
 
