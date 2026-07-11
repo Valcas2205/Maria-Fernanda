@@ -24,6 +24,35 @@ type Props = {
   surface: CheckoutSurface
 }
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email.trim())
+}
+
+const formatPhoneNumber = (value: string): string => {
+  const digits = value.replace(/\D/g, "")
+  if (!digits) return ""
+
+  if (digits.startsWith("58")) {
+    const phone = digits.slice(0, 12)
+    if (phone.length <= 2) return `+${phone}`
+    if (phone.length <= 5) return `+${phone.slice(0, 2)} ${phone.slice(2)}`
+    if (phone.length <= 8) return `+${phone.slice(0, 2)} ${phone.slice(2, 5)}-${phone.slice(5)}`
+    return `+${phone.slice(0, 2)} ${phone.slice(2, 5)}-${phone.slice(5, 8)}-${phone.slice(8)}`
+  } else if (digits.startsWith("1")) {
+    const phone = digits.slice(0, 11)
+    if (phone.length <= 1) return `+${phone}`
+    if (phone.length <= 4) return `+${phone.slice(0, 1)} (${phone.slice(1)}`
+    if (phone.length <= 7) return `+${phone.slice(0, 1)} (${phone.slice(1, 4)}) ${phone.slice(4)}`
+    return `+${phone.slice(0, 1)} (${phone.slice(1, 4)}) ${phone.slice(4, 7)}-${phone.slice(7)}`
+  } else {
+    const phone = digits.slice(0, 15)
+    if (phone.length <= 3) return `+${phone}`
+    if (phone.length <= 6) return `+${phone.slice(0, 3)} ${phone.slice(3)}`
+    return `+${phone.slice(0, 3)} ${phone.slice(3, 6)}-${phone.slice(6)}`
+  }
+}
+
 const METHOD_LABELS: Record<PaymentMethod, string> = {
   zelle: "Zelle",
   pagomovil: "Pago Móvil",
@@ -114,6 +143,10 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
     contact.location.trim()
 
   const submitContact = () => {
+    if (!isValidEmail(contact.email)) {
+      setError("Por favor ingresa un correo electrónico válido. (ej: nombre@dominio.com)")
+      return
+    }
     startTransition(async () => {
       try {
         setError(null)
@@ -228,9 +261,33 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
               <Input
                 id="phone"
                 value={contact.phone}
-                onChange={(e) =>
-                  setContact((s) => ({ ...s, phone: e.target.value }))
-                }
+                onChange={(e) => {
+                  let value = e.target.value
+
+                  if (!value) {
+                    setContact((s) => ({ ...s, phone: "" }))
+                    return
+                  }
+
+                  if (value.startsWith("+")) {
+                    const formatted = formatPhoneNumber(value)
+                    setContact((s) => ({ ...s, phone: formatted }))
+                    return
+                  }
+
+                  const digits = value.replace(/\D/g, "")
+
+                  if (digits.startsWith("1")) {
+                    value = "+1" + digits.slice(1)
+                  } else if (digits.startsWith("58")) {
+                    value = "+58" + digits.slice(2)
+                  } else if (digits.startsWith("4")) {
+                    value = "+58" + digits
+                  }
+
+                  const formatted = formatPhoneNumber(value)
+                  setContact((s) => ({ ...s, phone: formatted }))
+                }}
               />
             </div>
             <div className="grid gap-1.5 md:col-span-2">

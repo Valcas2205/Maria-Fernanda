@@ -4,6 +4,11 @@ import { useState, useEffect } from "react"
 import { Download, Heart, Loader2, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email.trim())
+}
+
 export function EmergencyKit() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -21,6 +26,17 @@ export function EmergencyKit() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!email) {
+      toast.error("Por favor ingresa tu correo electrónico.")
+      return
+    }
+
+    if (!isValidEmail(email)) {
+      toast.error("Por favor ingresa un correo electrónico válido. (ej: nombre@dominio.com)")
+      return
+    }
+
     setIsLoading(true)
 
     try {
