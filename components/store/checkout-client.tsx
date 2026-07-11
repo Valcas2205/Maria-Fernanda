@@ -1,74 +1,88 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useCart } from "@/lib/cart-context"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { ShieldCheck, ArrowLeft, Loader2, Tablet, BookOpen, CreditCard, Lock } from "lucide-react"
+import { useState, useEffect } from 'react';
+import { useCart } from '@/lib/cart-context';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import {
+  ShieldCheck,
+  ArrowLeft,
+  Loader2,
+  Tablet,
+  BookOpen,
+  CreditCard,
+  Lock,
+} from 'lucide-react';
 import {
   issueCheckoutTokenAction,
   upsertCheckoutCustomerAction,
   submitCheckoutPaymentAction,
-} from "@/lib/payments/actions"
+} from '@/lib/payments/actions';
 
 export function CheckoutClient() {
-  const { items, total, clearCart } = useCart()
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [bcvRate, setBcvRate] = useState<number | null>(null)
+  const { items, total, clearCart } = useCart();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [bcvRate, setBcvRate] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchBcv() {
       try {
-        const res = await fetch("/api/bcv")
+        const res = await fetch('/api/bcv');
         if (res.ok) {
-          const data = await res.json()
-          if (data.rate) setBcvRate(data.rate)
+          const data = await res.json();
+          if (data.rate) setBcvRate(data.rate);
         }
       } catch (e) {
-        console.error("Error loading BCV rate", e)
+        console.error('Error loading BCV rate', e);
       }
     }
-    fetchBcv()
-  }, [])
+    fetchBcv();
+  }, []);
 
-  const hasPhysical = items.some((i) => i.product.type === "physical")
+  const hasPhysical = items.some((i) => i.product.type === 'physical');
 
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    agency: "",
-    deliveryType: "barquisimeto", // "barquisimeto" | "nacional"
-    country: "Venezuela",
-    paymentMethod: "pago_movil",
-    paymentReference: "",
-  })
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    agency: '',
+    deliveryType: 'barquisimeto', // "barquisimeto" | "nacional"
+    country: 'Venezuela',
+    paymentMethod: 'pago_movil',
+    paymentReference: '',
+  });
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  // test
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     if (!form.name || !form.email || !form.paymentReference) {
-      setError("Por favor completa tu nombre, correo electrónico y referencia de pago.")
-      return
+      setError(
+        'Por favor completa tu nombre, correo electrónico y referencia de pago.',
+      );
+      return;
     }
-    setError("")
-    setLoading(true)
+    setError('');
+    setLoading(true);
     try {
       const { token } = await issueCheckoutTokenAction({
-        subscriptionId: "cart",
-        timePeriod: "one-time",
-        surface: "cart",
+        subscriptionId: 'cart',
+        timePeriod: 'one-time',
+        surface: 'cart',
         amountUsd: total,
-      })
+      });
 
       // ====================================================================
       // 🚨 TODO: MEJORAR VALIDACIÓN EN FRONTEND 🚨
@@ -80,12 +94,15 @@ export function CheckoutClient() {
       // 2. Hacer obligatorio el teléfono y validar que tenga al menos 6 caracteres.
       // 3. (Opcional) Validar la dirección mínima.
       // ====================================================================
-      const parts = form.name.trim().split(" ")
-      const firstName = parts[0] || "Cliente"
-      const lastName = parts.slice(1).join(" ") || "-" // Fallback para pasar validación BE
-      const location = [form.address, form.city, form.state, form.country].filter(Boolean).join(", ")
+      const parts = form.name.trim().split(' ');
+      const firstName = parts[0] || 'Cliente';
+      const lastName = parts.slice(1).join(' ') || '-'; // Fallback para pasar validación BE
+      const location = [form.address, form.city, form.state, form.country]
+        .filter(Boolean)
+        .join(', ');
       // BE exige teléfono de min 6 caracteres. Si el user lo deja vacío, pasamos un genérico
-      const phone = form.phone.trim().length >= 6 ? form.phone.trim() : "0000000"
+      const phone =
+        form.phone.trim().length >= 6 ? form.phone.trim() : '0000000';
 
       const { customerId } = await upsertCheckoutCustomerAction(token, {
         firstName,
@@ -93,37 +110,45 @@ export function CheckoutClient() {
         email: form.email,
         phone,
         location,
-      })
+      });
 
-      const paymentMethod = form.paymentMethod === "zelle" ? "zelle" : "pagomovil"
+      const paymentMethod =
+        form.paymentMethod === 'zelle' ? 'zelle' : 'pagomovil';
 
       const metadata = {
-          items: items.map((i) => ({
-            id: i.product.id,
-            name: i.product.name,
-            price: i.product.price,
-            quantity: i.quantity,
-          })),
-          deliveryType: form.deliveryType,
-          agency: form.agency,
-          paymentReference: form.paymentReference
-      }
+        items: items.map((i) => ({
+          id: i.product.id,
+          name: i.product.name,
+          price: i.product.price,
+          quantity: i.quantity,
+        })),
+        deliveryType: form.deliveryType,
+        agency: form.agency,
+        paymentReference: form.paymentReference,
+      };
 
       const { status } = await submitCheckoutPaymentAction(token, {
         customerId,
         method: paymentMethod,
         amountUsd: total,
-        amountVes: bcvRate && paymentMethod === "pagomovil" ? total * bcvRate : undefined,
+        amountVes:
+          bcvRate && paymentMethod === 'pagomovil'
+            ? total * bcvRate
+            : undefined,
         metadata,
-      })
+      });
 
-      clearCart()
-      router.push(`/thank-you?session=cart&status=${status}`)
+      clearCart();
+      router.push(`/thank-you?session=cart&status=${status}`);
     } catch (err) {
-      console.error(err)
-      setError(err instanceof Error ? err.message : "Ocurrió un error al procesar el pago. Intenta de nuevo.")
+      console.error(err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Ocurrió un error al procesar el pago. Intenta de nuevo.',
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -133,17 +158,23 @@ export function CheckoutClient() {
         <h1 className="font-serif text-3xl font-bold text-[#1a1a1a] mb-4">
           Tu carrito está vacío
         </h1>
-        <Link href="/tienda" className="inline-flex items-center gap-2 rounded-full bg-secondary px-7 py-3.5 text-base font-bold text-white hover:opacity-90">
+        <Link
+          href="/tienda"
+          className="inline-flex items-center gap-2 rounded-full bg-secondary px-7 py-3.5 text-base font-bold text-white hover:opacity-90"
+        >
           Ir a la tienda
         </Link>
       </section>
-    )
+    );
   }
 
   return (
     <section className="px-6 py-10 md:py-16">
       <div className="mx-auto max-w-5xl">
-        <Link href="/tienda/carrito" className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#5c4b32]/70 transition-colors hover:text-[#A7895C]">
+        <Link
+          href="/tienda/carrito"
+          className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#5c4b32]/70 transition-colors hover:text-[#A7895C]"
+        >
           <ArrowLeft size={16} />
           Volver al carrito
         </Link>
@@ -168,7 +199,10 @@ export function CheckoutClient() {
                 </h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="name">
+                    <label
+                      className="text-sm font-semibold text-[#5c4b32]"
+                      htmlFor="name"
+                    >
                       Nombre completo *
                     </label>
                     <input
@@ -183,7 +217,10 @@ export function CheckoutClient() {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="email">
+                    <label
+                      className="text-sm font-semibold text-[#5c4b32]"
+                      htmlFor="email"
+                    >
                       Correo electrónico *
                     </label>
                     <input
@@ -198,7 +235,10 @@ export function CheckoutClient() {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5 sm:col-span-2">
-                    <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="phone">
+                    <label
+                      className="text-sm font-semibold text-[#5c4b32]"
+                      htmlFor="phone"
+                    >
                       Teléfono (WhatsApp)
                     </label>
                     <input
@@ -222,24 +262,53 @@ export function CheckoutClient() {
                   </h2>
 
                   <div className="mb-6 flex gap-4">
-                    <label className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
-                      form.deliveryType === "barquisimeto" ? "border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]" : "border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40"
-                    }`}>
-                      <input type="radio" name="deliveryType" value="barquisimeto" checked={form.deliveryType === "barquisimeto"} onChange={handleChange} className="sr-only" />
-                      <span className="text-sm font-bold">Delivery en Barquisimeto</span>
+                    <label
+                      className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
+                        form.deliveryType === 'barquisimeto'
+                          ? 'border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]'
+                          : 'border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="deliveryType"
+                        value="barquisimeto"
+                        checked={form.deliveryType === 'barquisimeto'}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <span className="text-sm font-bold">
+                        Delivery en Barquisimeto
+                      </span>
                     </label>
-                    <label className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
-                      form.deliveryType === "nacional" ? "border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]" : "border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40"
-                    }`}>
-                      <input type="radio" name="deliveryType" value="nacional" checked={form.deliveryType === "nacional"} onChange={handleChange} className="sr-only" />
-                      <span className="text-sm font-bold">Envío Nacional (MRW/Zoom)</span>
+                    <label
+                      className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
+                        form.deliveryType === 'nacional'
+                          ? 'border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]'
+                          : 'border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="deliveryType"
+                        value="nacional"
+                        checked={form.deliveryType === 'nacional'}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <span className="text-sm font-bold">
+                        Envío Nacional (MRW/Zoom)
+                      </span>
                     </label>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    {form.deliveryType === "barquisimeto" ? (
+                    {form.deliveryType === 'barquisimeto' ? (
                       <div className="flex flex-col gap-1.5 sm:col-span-2">
-                        <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="address">
+                        <label
+                          className="text-sm font-semibold text-[#5c4b32]"
+                          htmlFor="address"
+                        >
                           Dirección exacta para el delivery *
                         </label>
                         <input
@@ -256,7 +325,10 @@ export function CheckoutClient() {
                     ) : (
                       <>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="state">
+                          <label
+                            className="text-sm font-semibold text-[#5c4b32]"
+                            htmlFor="state"
+                          >
                             Estado *
                           </label>
                           <input
@@ -271,7 +343,10 @@ export function CheckoutClient() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="city">
+                          <label
+                            className="text-sm font-semibold text-[#5c4b32]"
+                            htmlFor="city"
+                          >
                             Ciudad *
                           </label>
                           <input
@@ -286,7 +361,10 @@ export function CheckoutClient() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5 sm:col-span-2">
-                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="agency">
+                          <label
+                            className="text-sm font-semibold text-[#5c4b32]"
+                            htmlFor="agency"
+                          >
                             Nombre/Código de Agencia MRW o Zoom *
                           </label>
                           <input
@@ -305,9 +383,9 @@ export function CheckoutClient() {
                   </div>
                   <p className="mt-5 flex items-center gap-2 rounded-xl bg-[#A7895C]/10 px-4 py-3 text-xs text-[#5c4b32]">
                     <span>📦</span>
-                    {form.deliveryType === "barquisimeto"
-                      ? "El costo del delivery se coordinará contigo por WhatsApp después de la compra."
-                      : "Los envíos nacionales se realizan con Cobro en Destino (COD) por la agencia indicada."}
+                    {form.deliveryType === 'barquisimeto'
+                      ? 'El costo del delivery se coordinará contigo por WhatsApp después de la compra.'
+                      : 'Los envíos nacionales se realizan con Cobro en Destino (COD) por la agencia indicada.'}
                   </p>
                 </div>
               )}
@@ -319,11 +397,24 @@ export function CheckoutClient() {
                 </h2>
                 <div className="grid gap-4 sm:grid-cols-3 mb-6">
                   {/* Pago Movil */}
-                  <label className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
-                    form.paymentMethod === "pago_movil" ? "border-secondary bg-secondary/5" : "border-border hover:border-secondary/40"
-                  }`}>
-                    <input type="radio" name="paymentMethod" value="pago_movil" checked={form.paymentMethod === "pago_movil"} onChange={handleChange} className="sr-only" />
-                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">Pago Móvil</div>
+                  <label
+                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                      form.paymentMethod === 'pago_movil'
+                        ? 'border-secondary bg-secondary/5'
+                        : 'border-border hover:border-secondary/40'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="pago_movil"
+                      checked={form.paymentMethod === 'pago_movil'}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">
+                      Pago Móvil
+                    </div>
                     <div className="text-xs text-[#5c4b32]">
                       <p>Banco Plaza</p>
                       <p>V-26.540.635</p>
@@ -332,11 +423,24 @@ export function CheckoutClient() {
                   </label>
 
                   {/* Zelle */}
-                  <label className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
-                    form.paymentMethod === "zelle" ? "border-secondary bg-secondary/5" : "border-border hover:border-secondary/40"
-                  }`}>
-                    <input type="radio" name="paymentMethod" value="zelle" checked={form.paymentMethod === "zelle"} onChange={handleChange} className="sr-only" />
-                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">Zelle</div>
+                  <label
+                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                      form.paymentMethod === 'zelle'
+                        ? 'border-secondary bg-secondary/5'
+                        : 'border-border hover:border-secondary/40'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="zelle"
+                      checked={form.paymentMethod === 'zelle'}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">
+                      Zelle
+                    </div>
                     <div className="text-xs text-[#5c4b32] break-all">
                       <p>mafeazcunes@gmail.com</p>
                       <p>Maria Azcunes</p>
@@ -344,11 +448,24 @@ export function CheckoutClient() {
                   </label>
 
                   {/* PayPal */}
-                  <label className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
-                    form.paymentMethod === "paypal" ? "border-secondary bg-secondary/5" : "border-border hover:border-secondary/40"
-                  }`}>
-                    <input type="radio" name="paymentMethod" value="paypal" checked={form.paymentMethod === "paypal"} onChange={handleChange} className="sr-only" />
-                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">PayPal</div>
+                  <label
+                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                      form.paymentMethod === 'paypal'
+                        ? 'border-secondary bg-secondary/5'
+                        : 'border-border hover:border-secondary/40'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="paypal"
+                      checked={form.paymentMethod === 'paypal'}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">
+                      PayPal
+                    </div>
                     <div className="text-xs text-[#5c4b32] break-all">
                       <p>mafeazcunes@gmail.com</p>
                       <p>Maria Azcunes</p>
@@ -357,7 +474,10 @@ export function CheckoutClient() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="paymentReference">
+                  <label
+                    className="text-sm font-semibold text-[#5c4b32]"
+                    htmlFor="paymentReference"
+                  >
                     Número de referencia o recibo *
                   </label>
                   <input
@@ -371,7 +491,8 @@ export function CheckoutClient() {
                     className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                   />
                   <p className="text-xs text-[#5c4b32]/60 mt-1">
-                    Realiza el pago al método seleccionado y coloca el número de referencia aquí.
+                    Realiza el pago al método seleccionado y coloca el número de
+                    referencia aquí.
                   </p>
                 </div>
               </div>
@@ -396,12 +517,21 @@ export function CheckoutClient() {
                 </h2>
                 <div className="flex flex-col gap-3 mb-5">
                   {items.map((item) => (
-                    <div key={item.product.id} className="flex items-start gap-3">
+                    <div
+                      key={item.product.id}
+                      className="flex items-start gap-3"
+                    >
                       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-secondary/10">
-                        {item.product.type === "digital" ? (
-                          <Tablet className="h-5 w-5 text-secondary" strokeWidth={1.5} />
+                        {item.product.type === 'digital' ? (
+                          <Tablet
+                            className="h-5 w-5 text-secondary"
+                            strokeWidth={1.5}
+                          />
                         ) : (
-                          <BookOpen className="h-5 w-5 text-[#A7895C]" strokeWidth={1.5} />
+                          <BookOpen
+                            className="h-5 w-5 text-[#A7895C]"
+                            strokeWidth={1.5}
+                          />
                         )}
                       </div>
                       <div className="flex flex-1 justify-between gap-2">
@@ -410,7 +540,9 @@ export function CheckoutClient() {
                             {item.product.name}
                           </p>
                           {item.quantity > 1 && (
-                            <p className="text-xs text-[#5c4b32]/60">×{item.quantity}</p>
+                            <p className="text-xs text-[#5c4b32]/60">
+                              ×{item.quantity}
+                            </p>
                           )}
                         </div>
                         <span className="text-sm font-bold text-[#A7895C] shrink-0">
@@ -431,10 +563,16 @@ export function CheckoutClient() {
                         </span>
                         <span className="text-xs text-[#5c4b32]/50">USD</span>
                       </div>
-                      {form.paymentMethod === "pago_movil" && bcvRate && (
+                      {form.paymentMethod === 'pago_movil' && bcvRate && (
                         <div className="text-sm font-semibold text-secondary mt-1 animate-in fade-in zoom-in-95 duration-300">
-                          {(total * bcvRate).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs
-                          <span className="text-[10px] text-[#5c4b32]/50 ml-1 font-normal">(Tasa BCV)</span>
+                          {(total * bcvRate).toLocaleString('es-VE', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}{' '}
+                          Bs
+                          <span className="text-[10px] text-[#5c4b32]/50 ml-1 font-normal">
+                            (Tasa BCV)
+                          </span>
                         </div>
                       )}
                     </div>
@@ -460,7 +598,9 @@ export function CheckoutClient() {
                 </button>
 
                 <div className="mt-4 flex flex-col gap-1 items-center justify-center text-xs text-[#5c4b32]/70 text-center">
-                  <p>Al confirmar el pedido, revisaremos tu pago manualmente.</p>
+                  <p>
+                    Al confirmar el pedido, revisaremos tu pago manualmente.
+                  </p>
                   <p>Recibirás un correo de confirmación y tus productos.</p>
                 </div>
               </div>
@@ -469,5 +609,5 @@ export function CheckoutClient() {
         </form>
       </div>
     </section>
-  )
+  );
 }
