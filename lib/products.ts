@@ -92,7 +92,7 @@ export const products: Product[] = [
     description:
       "Un diario terapéutico guiado para acompañar tu proceso de crecimiento personal día a día.",
     longDescription: `Escribir es una de las herramientas más poderosas para procesar emociones y conocernos mejor. El Diario de Bienestar te ofrece prompts diarios cuidadosamente diseñados desde la psicología para guiar tu escritura reflexiva.\n\nCon páginas para registrar tus emociones, gratitud, metas, miedos y logros. Un espacio seguro que solo es tuyo.\n\nÚsalo diariamente, semanalmente o cuando sientas que necesitas soltar algo.`,
-    price: 7.99,
+    price: 0.05,
     images: ["/images/ProductoDigital1.jpeg"],
     features: [
       "Prompts de escritura terapéutica",
