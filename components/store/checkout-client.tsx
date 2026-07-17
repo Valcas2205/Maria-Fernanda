@@ -68,7 +68,8 @@ const handlePhoneChange = (
       country: string;
       paymentMethod: string;
       paymentReference: string;
-      senderId: string;
+      docType: string;
+      docNumber: string;
     }>
   >,
 ) => {
@@ -160,7 +161,8 @@ export function CheckoutClient() {
     country: 'Venezuela',
     paymentMethod: 'pago_movil',
     paymentReference: '',
-    senderId: '',
+    docType: 'V',
+    docNumber: '',
   });
 
   // test
@@ -177,7 +179,8 @@ export function CheckoutClient() {
       !form.firstName ||
       !form.lastName ||
       !form.email ||
-      !form.paymentReference
+      !form.paymentReference ||
+      !form.docNumber
     ) {
       setError(
         'Por favor completa tu nombre, apellido, correo electrónico y referencia de pago.',
@@ -227,7 +230,7 @@ export function CheckoutClient() {
         deliveryType: form.deliveryType,
         agency: form.agency,
         paymentReference: form.paymentReference,
-        senderId: form.senderId,
+        senderId: `${form.docType}${form.docNumber}`,
       };
 
       const { status, paymentId } = await submitCheckoutPaymentAction(token, {
@@ -627,16 +630,34 @@ export function CheckoutClient() {
                   >
                     Cédula de Identidad (Titular de la cuenta) *
                   </label>
-                  <input
-                    id="senderId"
-                    name="senderId"
-                    type="text"
-                    required
-                    value={form.senderId}
-                    onChange={handleChange}
-                    placeholder="Ej: V-12345678 o 12345678"
-                    className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
-                  />
+                  <div className="flex rounded-xl border border-border bg-background transition focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20 overflow-hidden">
+                    <select
+                      name="docType"
+                      value={form.docType}
+                      onChange={handleChange}
+                      className="bg-transparent pl-4 pr-2 py-3 text-sm text-[#1a1a1a] outline-none border-r border-border"
+                    >
+                      <option value="V">V</option>
+                      <option value="E">E</option>
+                      <option value="J">J</option>
+                      <option value="G">G</option>
+                      <option value="P">P</option>
+                      <option value="C">C</option>
+                    </select>
+                    <input
+                      id="docNumber"
+                      name="docNumber"
+                      type="text"
+                      required
+                      value={form.docNumber}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        setForm((prev) => ({ ...prev, docNumber: val }));
+                      }}
+                      placeholder="12345678"
+                      className="flex-1 bg-transparent px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none"
+                    />
+                  </div>
                   <p className="text-xs text-[#5c4b32]/60 mt-1">
                     Necesitamos tu cédula para que nuestro sistema valide el
                     pago automáticamente.
