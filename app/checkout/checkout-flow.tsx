@@ -168,12 +168,13 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
         setError(null)
         if (!token || !customerId)
           throw new Error("Faltan datos del checkout. Reintenta.")
-        await submitCheckoutPaymentAction(token, {
+        const out = await submitCheckoutPaymentAction(token, {
           customerId,
           method,
           metadata: { reference, source: "todoesunbalance_checkout_v1" },
+          status: "verifying",
         })
-        router.push("/thank-you")
+        router.push(`/thank-you?paymentId=${out.paymentId}&status=verifying`)
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "No se pudo enviar el pago.",

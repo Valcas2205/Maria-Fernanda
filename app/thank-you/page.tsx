@@ -10,9 +10,10 @@ function ThankYouContent() {
   const searchParams = useSearchParams()
   const initialStatus = searchParams.get("status") || "pending"
   const paymentId = searchParams.get("paymentId")
-  
+
   const [status, setStatus] = useState(initialStatus)
   const [isPolling, setIsPolling] = useState(initialStatus === "verifying")
+  const [timeLeft, setTimeLeft] = useState(90) // 90 segundos = 1:30 min
 
   useEffect(() => {
     if (!isPolling || !paymentId) return
@@ -34,19 +35,31 @@ function ThankYouContent() {
       }
     }, 4000)
 
-    // Detener polling después de 3 minutos como máximo (180s = 45 intentos) para no dejarlo infinito
-    const timeout = setTimeout(() => {
-      setIsPolling(false)
-      if (status === "verifying") {
-        setStatus("pending") // Fallback visual a pendiente
-      }
-    }, 180000)
+    const timerInterval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          setIsPolling(false)
+          if (status === "verifying") {
+            setStatus("pending") // Fallback visual a pendiente
+          }
+          clearInterval(timerInterval)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
 
     return () => {
       clearInterval(pollInterval)
-      clearTimeout(timeout)
+      clearInterval(timerInterval)
     }
   }, [isPolling, paymentId, status])
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
 
   const isApproved = status === "approved"
   const isVerifying = status === "verifying"
@@ -58,7 +71,7 @@ function ThankYouContent() {
           <div className="h-full bg-secondary animate-pulse w-full"></div>
         </div>
       )}
-      
+
       <div className="flex justify-center mb-6">
         {isVerifying ? (
           <div className="h-20 w-20 rounded-full bg-secondary/10 flex items-center justify-center relative">
@@ -79,12 +92,17 @@ function ThankYouContent() {
       <h1 className="mb-3 font-serif text-3xl font-bold text-[#1a1a1a] md:text-4xl">
         {isVerifying ? "Verificando..." : isApproved ? "¡Pago Confirmado!" : "¡Gracias!"}
       </h1>
-      
+
       <p className="mb-8 text-[15px] leading-relaxed text-[#333333]">
         {isVerifying ? (
           <>
             Estamos validando tu pago en tiempo real con la entidad bancaria.<br/>
             <strong>Por favor, no cierres esta ventana.</strong>
+
+            <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-1.5 text-lg font-semibold text-secondary">
+              <Clock className="h-4 w-4" />
+              Tiempo restante: {formatTime(timeLeft)}
+            </span>
           </>
         ) : isApproved ? (
           <>
@@ -92,8 +110,9 @@ function ThankYouContent() {
           </>
         ) : (
           <>
-            Recibimos tu reporte de pago y quedó <strong>pendiente de validación</strong>.
-            Revisaremos el comprobante manualmente y te contactaremos.
+            Estamos presentando demoras con el banco. Seguiremos verificando tu pago en segundo plano durante <strong>la próxima hora</strong>.
+            <br/><br/>
+            Si logramos validarlo, te enviaremos tu recibo por correo. De lo contrario, un administrador lo revisará manualmente.
           </>
         )}
       </p>
