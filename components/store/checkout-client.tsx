@@ -14,11 +14,113 @@ import {
   CreditCard,
   Lock,
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import {
   issueCheckoutTokenAction,
   upsertCheckoutCustomerAction,
   submitCheckoutPaymentAction,
 } from '@/lib/payments/actions';
+
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+};
+
+const formatPhoneNumber = (value: string): string => {
+  const digits = value.replace(/\D/g, '');
+  if (!digits) return '';
+
+  if (digits.startsWith('58')) {
+    const phone = digits.slice(0, 12);
+    if (phone.length <= 2) return `+${phone}`;
+    if (phone.length <= 5) return `+${phone.slice(0, 2)} ${phone.slice(2)}`;
+    if (phone.length <= 8)
+      return `+${phone.slice(0, 2)} ${phone.slice(2, 5)}-${phone.slice(5)}`;
+    return `+${phone.slice(0, 2)} ${phone.slice(2, 5)}-${phone.slice(5, 8)}-${phone.slice(8)}`;
+  } else if (digits.startsWith('1')) {
+    const phone = digits.slice(0, 11);
+    if (phone.length <= 1) return `+${phone}`;
+    if (phone.length <= 4) return `+${phone.slice(0, 1)} (${phone.slice(1)}`;
+    if (phone.length <= 7)
+      return `+${phone.slice(0, 1)} (${phone.slice(1, 4)}) ${phone.slice(4)}`;
+    return `+${phone.slice(0, 1)} (${phone.slice(1, 4)}) ${phone.slice(4, 7)}-${phone.slice(7)}`;
+  } else {
+    const phone = digits.slice(0, 15);
+    if (phone.length <= 3) return `+${phone}`;
+    if (phone.length <= 6) return `+${phone.slice(0, 3)} ${phone.slice(3)}`;
+    return `+${phone.slice(0, 3)} ${phone.slice(3, 6)}-${phone.slice(6)}`;
+  }
+};
+
+const handlePhoneChange = (
+  e: React.ChangeEvent<HTMLInputElement>,
+  setForm: React.Dispatch<
+    React.SetStateAction<{
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      address: string;
+      city: string;
+      state: string;
+      agency: string;
+      deliveryType: string;
+      country: string;
+      paymentMethod: string;
+      paymentReference: string;
+    }>
+  >,
+) => {
+  let value = e.target.value;
+
+  if (!value) {
+    setForm((prev) => ({ ...prev, phone: '' }));
+    return;
+  }
+
+  // Si ya tiene +, respetar lo que escriba el usuario
+  if (value.startsWith('+')) {
+    const formatted = formatPhoneNumber(value);
+    setForm((prev) => ({ ...prev, phone: formatted }));
+    return;
+  }
+
+  // Si solo tiene números sin +
+  let digits = value.replace(/\D/g, '');
+
+  // Si empieza con 0 (formato local venezolano), remover el 0
+  if (digits.startsWith('0')) {
+    digits = digits.slice(1);
+  }
+
+  // Si después de remover el 0, está vacío, no hacer nada
+  if (!digits) {
+    setForm((prev) => ({ ...prev, phone: '' }));
+    return;
+  }
+
+  // Si empieza con 1, asumir USA
+  if (digits.startsWith('1')) {
+    value = '+1' + digits.slice(1);
+  }
+  // Si empieza con 58, asumir Venezuela
+  else if (digits.startsWith('58')) {
+    value = '+58' + digits.slice(2);
+  }
+  // Si empieza con 4 (típico Venezuela), agregar +58
+  else if (digits.startsWith('4')) {
+    value = '+58' + digits;
+  }
+
+  const formatted = formatPhoneNumber(value);
+  console.log('📱 Phone input:', {
+    original: e.target.value,
+    digits,
+    value,
+    formatted,
+  });
+  setForm((prev) => ({ ...prev, phone: formatted }));
+};
 
 export function CheckoutClient() {
   const { items, total, clearCart } = useCart();
@@ -45,7 +147,8 @@ export function CheckoutClient() {
   const hasPhysical = items.some((i) => i.product.type === 'physical');
 
   const [form, setForm] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     address: '',
@@ -68,9 +171,20 @@ export function CheckoutClient() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.email || !form.paymentReference) {
+    if (
+      !form.firstName ||
+      !form.lastName ||
+      !form.email ||
+      !form.paymentReference
+    ) {
       setError(
-        'Por favor completa tu nombre, correo electrónico y referencia de pago.',
+        'Por favor completa tu nombre, apellido, correo electrónico y referencia de pago.',
+      );
+      return;
+    }
+    if (!isValidEmail(form.email)) {
+      setError(
+        'Por favor ingresa un correo electrónico válido. (ej: nombre@dominio.com)',
       );
       return;
     }
@@ -84,29 +198,15 @@ export function CheckoutClient() {
         amountUsd: total,
       });
 
-      // ====================================================================
-      // 🚨 TODO: MEJORAR VALIDACIÓN EN FRONTEND 🚨
-      // ====================================================================
-      // Actualmente el FE tiene campos sueltos que no empatan 1:1 con el
-      // esquema estricto de WaaS (UpsertPaymentCustomerDto).
-      // Tareas pendientes:
-      // 1. Separar "Nombre Completo" en "Nombre" y "Apellido" (obligatorios).
-      // 2. Hacer obligatorio el teléfono y validar que tenga al menos 6 caracteres.
-      // 3. (Opcional) Validar la dirección mínima.
-      // ====================================================================
-      const parts = form.name.trim().split(' ');
-      const firstName = parts[0] || 'Cliente';
-      const lastName = parts.slice(1).join(' ') || '-'; // Fallback para pasar validación BE
       const location = [form.address, form.city, form.state, form.country]
         .filter(Boolean)
         .join(', ');
-      // BE exige teléfono de min 6 caracteres. Si el user lo deja vacío, pasamos un genérico
       const phone =
         form.phone.trim().length >= 6 ? form.phone.trim() : '0000000';
 
       const { customerId } = await upsertCheckoutCustomerAction(token, {
-        firstName,
-        lastName,
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
         email: form.email,
         phone,
         location,
@@ -201,19 +301,37 @@ export function CheckoutClient() {
                   <div className="flex flex-col gap-1.5">
                     <label
                       className="text-sm font-semibold text-[#5c4b32]"
-                      htmlFor="name"
+                      htmlFor="firstName"
                     >
-                      Nombre completo *
+                      Nombre *
                     </label>
-                    <input
-                      id="name"
-                      name="name"
+                    <Input
+                      size="lg"
+                      id="firstName"
+                      name="firstName"
                       type="text"
                       required
-                      value={form.name}
+                      value={form.firstName}
                       onChange={handleChange}
                       placeholder="Tu nombre"
-                      className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      className="text-sm font-semibold text-[#5c4b32]"
+                      htmlFor="lastName"
+                    >
+                      Apellido *
+                    </label>
+                    <Input
+                      size="lg"
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      required
+                      value={form.lastName}
+                      onChange={handleChange}
+                      placeholder="Tu apellido"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
@@ -223,7 +341,8 @@ export function CheckoutClient() {
                     >
                       Correo electrónico *
                     </label>
-                    <input
+                    <Input
+                      size="lg"
                       id="email"
                       name="email"
                       type="email"
@@ -231,24 +350,23 @@ export function CheckoutClient() {
                       value={form.email}
                       onChange={handleChange}
                       placeholder="tu@correo.com"
-                      className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                     />
                   </div>
-                  <div className="flex flex-col gap-1.5 sm:col-span-2">
+                  <div className="flex flex-col gap-1.5">
                     <label
                       className="text-sm font-semibold text-[#5c4b32]"
                       htmlFor="phone"
                     >
                       Teléfono (WhatsApp)
                     </label>
-                    <input
+                    <Input
+                      size="lg"
                       id="phone"
                       name="phone"
                       type="tel"
                       value={form.phone}
-                      onChange={handleChange}
-                      placeholder="+58 424 0000000"
-                      className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                      onChange={(e) => handlePhoneChange(e, setForm)}
+                      placeholder="+58 414-0000000"
                     />
                   </div>
                 </div>
@@ -311,7 +429,8 @@ export function CheckoutClient() {
                         >
                           Dirección exacta para el delivery *
                         </label>
-                        <input
+                        <Input
+                          size="lg"
                           id="address"
                           name="address"
                           type="text"
@@ -319,7 +438,6 @@ export function CheckoutClient() {
                           value={form.address}
                           onChange={handleChange}
                           placeholder="Ej: Urb. del Este, Calle 2, Edificio Los Robles, Apto 4"
-                          className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                         />
                       </div>
                     ) : (
@@ -331,7 +449,8 @@ export function CheckoutClient() {
                           >
                             Estado *
                           </label>
-                          <input
+                          <Input
+                            size="lg"
                             id="state"
                             name="state"
                             type="text"
@@ -339,7 +458,6 @@ export function CheckoutClient() {
                             value={form.state}
                             onChange={handleChange}
                             placeholder="Ej: Carabobo"
-                            className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
@@ -349,7 +467,8 @@ export function CheckoutClient() {
                           >
                             Ciudad *
                           </label>
-                          <input
+                          <Input
+                            size="lg"
                             id="city"
                             name="city"
                             type="text"
@@ -357,7 +476,6 @@ export function CheckoutClient() {
                             value={form.city}
                             onChange={handleChange}
                             placeholder="Ej: Valencia"
-                            className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                           />
                         </div>
                         <div className="flex flex-col gap-1.5 sm:col-span-2">
@@ -367,7 +485,8 @@ export function CheckoutClient() {
                           >
                             Nombre/Código de Agencia MRW o Zoom *
                           </label>
-                          <input
+                          <Input
+                            size="lg"
                             id="agency"
                             name="agency"
                             type="text"
@@ -375,7 +494,6 @@ export function CheckoutClient() {
                             value={form.agency}
                             onChange={handleChange}
                             placeholder="Ej: MRW Agencia Centro o Zoom Av. Bolívar"
-                            className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                           />
                         </div>
                       </>
@@ -480,7 +598,8 @@ export function CheckoutClient() {
                   >
                     Número de referencia o recibo *
                   </label>
-                  <input
+                  <Input
+                    size="lg"
                     id="paymentReference"
                     name="paymentReference"
                     type="text"
@@ -488,7 +607,6 @@ export function CheckoutClient() {
                     value={form.paymentReference}
                     onChange={handleChange}
                     placeholder="Ej: 12345678"
-                    className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                   />
                   <p className="text-xs text-[#5c4b32]/60 mt-1">
                     Realiza el pago al método seleccionado y coloca el número de

@@ -125,14 +125,14 @@ export function Pricing() {
                         <span>{service.priceLabel}</span>
                       </div>
                     </div>
-                    {service.subscriptionId ? (
+                    {/* {service.subscriptionId ? (
                       <Link
                         href={`/checkout?id=${service.subscriptionId}&surface=pricing`}
                         className="block rounded-full bg-secondary py-2.5 text-center text-sm font-medium text-secondary-foreground transition-opacity hover:opacity-90"
                       >
                         Reservar y pagar
                       </Link>
-                    ) : null}
+                    ) : null} */}
                   </div>
                 ) : (
                   <Link
