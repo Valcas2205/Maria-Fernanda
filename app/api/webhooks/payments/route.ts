@@ -4,6 +4,9 @@ import { resend } from "@/lib/resend"
 import { OrderPendingEmail } from "@/components/emails/order-pending"
 import { OrderApprovedEmail } from "@/components/emails/order-approved"
 import { AdminNewOrderEmail } from "@/components/emails/admin-new-order"
+import { products } from "@/lib/products"
+import fs from "fs/promises"
+import path from "path"
 
 
 export async function POST(req: NextRequest) {
@@ -100,6 +103,32 @@ export async function POST(req: NextRequest) {
 
     } else if (payload.event === "payment_approved") {
       if (payload.customer?.email) {
+        const items = payload.metadata?.items || [];
+        const attachments = [];
+        let hasDigitalAttachments = false;
+        let hasPhysicalItems = false;
+
+        for (const item of items) {
+          const product = products.find(p => p.id === item.id);
+          if (product) {
+            if (product.type === "digital" && product.fileName) {
+              try {
+                const filePath = path.join(process.cwd(), "private/resources", product.fileName);
+                const fileBuffer = await fs.readFile(filePath);
+                attachments.push({
+                  filename: product.fileName,
+                  content: fileBuffer,
+                });
+                hasDigitalAttachments = true;
+              } catch (err) {
+                console.error(`[Webhook] Error al leer archivo ${product.fileName}:`, err);
+              }
+            } else if (product.type === "physical") {
+              hasPhysicalItems = true;
+            }
+          }
+        }
+
         await resend.emails.send({
           from: "Maria Fernanda <hola@todoesunbalance.com>",
           to: payload.customer.email,
@@ -107,12 +136,15 @@ export async function POST(req: NextRequest) {
           react: OrderApprovedEmail({
             firstName: payload.customer.firstName || 'Cliente',
             orderId: payload.paymentId,
-            items: payload.metadata?.items || [],
+            items: items,
+            hasDigitalAttachments,
+            hasPhysicalItems,
           }) as React.ReactElement,
+          attachments: attachments.length > 0 ? attachments : undefined,
         })
       }
 
-      console.log(`[Webhook] Evento approved: Correo de aprobación enviado al cliente.`)
+      console.log(`[Webhook] Evento approved: Correo de aprobación enviado al cliente con ${payload.metadata?.items?.length || 0} items.`)
     }
 
     return NextResponse.json({ received: true })
