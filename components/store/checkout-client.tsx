@@ -76,7 +76,18 @@ const handlePhoneChange = (
   }
 
   // Si solo tiene números sin +
-  const digits = value.replace(/\D/g, "")
+  let digits = value.replace(/\D/g, "")
+
+  // Si empieza con 0 (formato local venezolano), remover el 0
+  if (digits.startsWith("0")) {
+    digits = digits.slice(1)
+  }
+
+  // Si después de remover el 0, está vacío, no hacer nada
+  if (!digits) {
+    setForm((prev) => ({ ...prev, phone: "" }))
+    return
+  }
 
   // Si empieza con 1, asumir USA
   if (digits.startsWith("1")) {
@@ -92,6 +103,7 @@ const handlePhoneChange = (
   }
 
   const formatted = formatPhoneNumber(value)
+  console.log("📱 Phone input:", { original: e.target.value, digits, value, formatted })
   setForm((prev) => ({ ...prev, phone: formatted }))
 }
 

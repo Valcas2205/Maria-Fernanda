@@ -275,7 +275,16 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
                     return
                   }
 
-                  const digits = value.replace(/\D/g, "")
+                  let digits = value.replace(/\D/g, "")
+
+                  if (digits.startsWith("0")) {
+                    digits = digits.slice(1)
+                  }
+
+                  if (!digits) {
+                    setContact((s) => ({ ...s, phone: "" }))
+                    return
+                  }
 
                   if (digits.startsWith("1")) {
                     value = "+1" + digits.slice(1)
