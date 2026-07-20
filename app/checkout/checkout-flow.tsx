@@ -170,6 +170,7 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
         setError(null)
         if (!token || !customerId)
           throw new Error("Faltan datos del checkout. Reintenta.")
+        const finalStatus = method === "pagomovil" ? "verifying" : "pending"
         const out = await submitCheckoutPaymentAction(token, {
           customerId,
           method,
@@ -178,9 +179,9 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
             senderId: `${docType}${docNumber}`,
             source: "todoesunbalance_checkout_v1" 
           },
-          status: "verifying",
+          status: finalStatus,
         })
-        router.push(`/thank-you?paymentId=${out.paymentId}&status=verifying`)
+        router.push(`/thank-you?paymentId=${out.paymentId}&status=${finalStatus}`)
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "No se pudo enviar el pago.",

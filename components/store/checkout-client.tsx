@@ -218,7 +218,7 @@ export function CheckoutClient() {
       });
 
       const paymentMethod =
-        form.paymentMethod === 'zelle' ? 'zelle' : 'pagomovil';
+        form.paymentMethod === 'zelle' ? 'zelle' : (form.paymentMethod === 'paypal' ? 'paypal' : 'pagomovil');
 
       const metadata = {
         items: items.map((i) => ({
@@ -233,6 +233,8 @@ export function CheckoutClient() {
         senderId: `${form.docType}${form.docNumber}`,
       };
 
+      const finalStatus = paymentMethod === 'pagomovil' ? 'verifying' : 'pending';
+
       const { status, paymentId } = await submitCheckoutPaymentAction(token, {
         customerId,
         method: paymentMethod,
@@ -242,7 +244,7 @@ export function CheckoutClient() {
             ? total * bcvRate
             : undefined,
         metadata,
-        status: 'verifying',
+        status: finalStatus,
       });
 
       clearCart();
