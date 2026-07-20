@@ -183,7 +183,7 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
           },
           status: finalStatus,
         })
-        router.push(`/thank-you?paymentId=${out.paymentId}&status=${finalStatus}`)
+        router.push(`/thank-you?paymentId=${out.paymentId}&status=${finalStatus}&method=${method}`)
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "No se pudo enviar el pago.",

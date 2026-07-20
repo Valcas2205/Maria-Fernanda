@@ -252,7 +252,7 @@ export function CheckoutClient() {
 
       clearCart();
       router.push(
-        `/thank-you?session=cart&status=${status}&paymentId=${paymentId}`,
+        `/thank-you?session=cart&status=${status}&paymentId=${paymentId}&method=${paymentMethod}`,
       );
     } catch (err) {
       console.error(err);

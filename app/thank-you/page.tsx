@@ -10,6 +10,7 @@ function ThankYouContent() {
   const searchParams = useSearchParams()
   const initialStatus = searchParams.get("status") || "pending"
   const paymentId = searchParams.get("paymentId")
+  const method = searchParams.get("method") || "pagomovil"
 
   const [status, setStatus] = useState(initialStatus)
   const [isPolling, setIsPolling] = useState(initialStatus === "verifying")
@@ -110,9 +111,19 @@ function ThankYouContent() {
           </>
         ) : (
           <>
-            Estamos presentando demoras con el banco. Seguiremos verificando tu pago en segundo plano durante <strong>la próxima hora</strong>.
-            <br/><br/>
-            Si logramos validarlo, te enviaremos tu recibo por correo. De lo contrario, un administrador lo revisará manualmente.
+            {method === "zelle" || method === "paypal" ? (
+              <>
+                Recibimos tu reporte de pago y ha quedado en estado de <strong>revisión</strong>. Nuestro equipo validará la transacción manualmente en breve.
+                <br/><br/>
+                Te enviaremos tu recibo por correo al confirmarlo.
+              </>
+            ) : (
+              <>
+                Estamos presentando demoras con el banco. Seguiremos verificando tu pago en segundo plano durante <strong>la próxima hora</strong>.
+                <br/><br/>
+                Si logramos validarlo, te enviaremos tu recibo por correo. De lo contrario, un administrador lo revisará manualmente.
+              </>
+            )}
           </>
         )}
       </p>
