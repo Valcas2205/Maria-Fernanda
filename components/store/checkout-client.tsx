@@ -625,46 +625,48 @@ export function CheckoutClient() {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-1.5 mt-4">
-                  <label
-                    className="text-sm font-semibold text-[#5c4b32]"
-                    htmlFor="senderId"
-                  >
-                    Cédula de Identidad (Titular de la cuenta) *
-                  </label>
-                  <div className="flex rounded-xl border border-border bg-background transition focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20 overflow-hidden">
-                    <select
-                      name="docType"
-                      value={form.docType}
-                      onChange={handleChange}
-                      className="bg-transparent pl-4 pr-2 py-3 text-sm text-[#1a1a1a] outline-none border-r border-border"
+                {form.paymentMethod !== 'zelle' && form.paymentMethod !== 'paypal' && (
+                  <div className="flex flex-col gap-1.5 mt-4">
+                    <label
+                      className="text-sm font-semibold text-[#5c4b32]"
+                      htmlFor="senderId"
                     >
-                      <option value="V">V</option>
-                      <option value="E">E</option>
-                      <option value="J">J</option>
-                      <option value="G">G</option>
-                      <option value="P">P</option>
-                      <option value="C">C</option>
-                    </select>
-                    <input
-                      id="docNumber"
-                      name="docNumber"
-                      type="text"
-                      required
-                      value={form.docNumber}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, "");
-                        setForm((prev) => ({ ...prev, docNumber: val }));
-                      }}
-                      placeholder="12345678"
-                      className="flex-1 bg-transparent px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none"
-                    />
+                      Cédula de Identidad (Titular de la cuenta) *
+                    </label>
+                    <div className="flex rounded-xl border border-border bg-background transition focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20 overflow-hidden">
+                      <select
+                        name="docType"
+                        value={form.docType}
+                        onChange={handleChange}
+                        className="bg-transparent pl-4 pr-2 py-3 text-sm text-[#1a1a1a] outline-none border-r border-border"
+                      >
+                        <option value="V">V</option>
+                        <option value="E">E</option>
+                        <option value="J">J</option>
+                        <option value="G">G</option>
+                        <option value="P">P</option>
+                        <option value="C">C</option>
+                      </select>
+                      <input
+                        id="docNumber"
+                        name="docNumber"
+                        type="text"
+                        required
+                        value={form.docNumber}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          setForm((prev) => ({ ...prev, docNumber: val }));
+                        }}
+                        placeholder="12345678"
+                        className="flex-1 bg-transparent px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none"
+                      />
+                    </div>
+                    <p className="text-xs text-[#5c4b32]/60 mt-1">
+                      Necesitamos tu cédula para que nuestro sistema valide el
+                      pago automáticamente.
+                    </p>
                   </div>
-                  <p className="text-xs text-[#5c4b32]/60 mt-1">
-                    Necesitamos tu cédula para que nuestro sistema valide el
-                    pago automáticamente.
-                  </p>
-                </div>
+                )}
               </div>
 
               {error && (

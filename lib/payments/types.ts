@@ -1,4 +1,4 @@
-export type PaymentMethod = "zelle" | "pagomovil"
+export type PaymentMethod = "zelle" | "pagomovil" | "paypal"
 
 export type CheckoutSurface = "pricing" | "cart" | "product" | "other"
 
