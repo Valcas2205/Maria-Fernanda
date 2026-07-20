@@ -13,6 +13,8 @@ import {
   BookOpen,
   CreditCard,
   Lock,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -20,6 +22,26 @@ import {
   upsertCheckoutCustomerAction,
   submitCheckoutPaymentAction,
 } from '@/lib/payments/actions';
+
+type StepKey = 'contact' | 'shipping' | 'payment-method' | 'confirm';
+
+const PAYMENT_METHOD_DETAILS: Record<
+  'pago_movil' | 'zelle' | 'paypal',
+  { title: string; lines: string[] }
+> = {
+  pago_movil: {
+    title: 'Pago Móvil',
+    lines: ['Banco Plaza', 'V-26.540.635', '0424-5414804'],
+  },
+  zelle: {
+    title: 'Zelle',
+    lines: ['mafeazcunes@gmail.com', 'Maria Azcunes'],
+  },
+  paypal: {
+    title: 'PayPal',
+    lines: ['mafeazcunes@gmail.com', 'Maria Azcunes'],
+  },
+};
 
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -130,6 +152,7 @@ export function CheckoutClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [bcvRate, setBcvRate] = useState<number | null>(null);
+  const [copiedMethod, setCopiedMethod] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBcv() {
@@ -148,6 +171,22 @@ export function CheckoutClient() {
 
   const hasPhysical = items.some((i) => i.product.type === 'physical');
 
+  const [stepIndex, setStepIndex] = useState(0);
+  const steps: { key: StepKey; label: string }[] = [
+    { key: 'contact', label: 'Contacto' } as const,
+    ...(hasPhysical ? [{ key: 'shipping' as const, label: 'Envío' }] : []),
+    { key: 'payment-method' as const, label: 'Pago' },
+    { key: 'confirm' as const, label: 'Confirmar' },
+  ];
+
+  const safeStepIndex = Math.min(stepIndex, steps.length - 1);
+  const currentStepKey = steps[safeStepIndex]?.key ?? 'contact';
+  const isFirstStep = safeStepIndex === 0;
+  const isLastStep = safeStepIndex === steps.length - 1;
+
+  const stepClass = (key: StepKey) =>
+    `${currentStepKey === key ? 'block' : 'hidden'}`;
+
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -165,6 +204,9 @@ export function CheckoutClient() {
     docNumber: '',
   });
 
+  const isDocNumberRequired =
+    form.paymentMethod !== 'zelle' && form.paymentMethod !== 'paypal';
+
   // test
 
   function handleChange(
@@ -173,9 +215,65 @@ export function CheckoutClient() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
+  function validateContactStep(): boolean {
+    if (
+      !form.firstName.trim() ||
+      !form.lastName.trim() ||
+      !form.email.trim()
+    ) {
+      setError(
+        'Por favor completa todos los campos: nombre, apellido y correo electrónico.',
+      );
+      return false;
+    }
+    if (!isValidEmail(form.email)) {
+      setError(
+        'El correo electrónico no es válido. Por favor verifica e intenta de nuevo.',
+      );
+      return false;
+    }
+    setError('');
+    return true;
+  }
+
+  function validateShippingStep(): boolean {
+    if (form.deliveryType === 'barquisimeto') {
+      if (!form.address.trim()) {
+        setError('Por favor ingresa tu dirección exacta para que podamos entregarte el pedido.');
+        return false;
+      }
+    } else if (
+      !form.state.trim() ||
+      !form.city.trim() ||
+      !form.agency.trim()
+    ) {
+      setError('Por favor completa el estado, ciudad y la agencia MRW o Zoom.');
+      return false;
+    }
+    setError('');
+    return true;
+  }
+
+  function goNext() {
+    if (currentStepKey === 'contact' && !validateContactStep()) return;
+    if (currentStepKey === 'shipping' && !validateShippingStep()) return;
+    setStepIndex((i) => Math.min(i + 1, steps.length - 1));
+  }
+
+  function goBack() {
+    setError('');
+    setStepIndex((i) => Math.max(i - 1, 0));
+  }
+
+  function copyPaymentDetails(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedMethod(text);
+      setTimeout(() => setCopiedMethod(null), 2000);
+    });
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const isDocNumberRequired = form.paymentMethod !== 'zelle' && form.paymentMethod !== 'paypal';
 
     if (
       !form.firstName ||
@@ -185,8 +283,7 @@ export function CheckoutClient() {
       (isDocNumberRequired && !form.docNumber)
     ) {
       setError(
-        'Por favor completa tu nombre, apellido, correo electrónico, referencia de pago' +
-        (isDocNumberRequired ? ' y cédula de identidad.' : '.')
+        'Por favor completa todos los campos requeridos antes de confirmar el pedido.'
       );
       return;
     }
@@ -256,11 +353,15 @@ export function CheckoutClient() {
       );
     } catch (err) {
       console.error(err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Ocurrió un error al procesar el pago. Intenta de nuevo.',
-      );
+      let errorMessage = 'Parece que hay un problema momentáneo en nuestro servidor. Por favor, intenta de nuevo en unos instantes.';
+
+      if (err instanceof Error) {
+        if (err.message.includes('fetch') || err.message.includes('network')) {
+          errorMessage = 'Problema de conexión. Verifica tu internet e intenta de nuevo.';
+        }
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -287,7 +388,9 @@ export function CheckoutClient() {
       <div className="mx-auto max-w-5xl">
         <Link
           href="/tienda/carrito"
-          className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#5c4b32]/70 transition-colors hover:text-[#A7895C]"
+          className={`${
+            currentStepKey === 'contact' ? 'inline-flex' : 'hidden'
+          } lg:inline-flex mb-8 items-center gap-2 text-sm font-semibold text-[#5c4b32]/70 transition-colors hover:text-[#A7895C]`}
         >
           <ArrowLeft size={16} />
           Volver al carrito
@@ -297,17 +400,58 @@ export function CheckoutClient() {
           Finalizar compra
         </h1>
 
+        {/* Step indicator */}
+        <div className="mb-8 flex items-center gap-1 overflow-x-auto">
+          {steps.map((step, i) => {
+            const isCompleted = i < safeStepIndex;
+            const isCurrent = i === safeStepIndex;
+            return (
+              <div key={step.key} className="flex flex-shrink-0 items-center gap-1">
+                <div
+                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-all ${
+                    isCompleted || isCurrent
+                      ? 'bg-secondary text-white'
+                      : 'border-2 border-border text-[#5c4b32]/50'
+                  } ${isCurrent ? 'ring-3 ring-secondary/30' : ''}`}
+                >
+                  {isCompleted ? (
+                    <span className="text-[8px]">✓</span>
+                  ) : (
+                    <span>{i + 1}</span>
+                  )}
+                </div>
+                <span
+                  className={`text-[10px] font-semibold whitespace-nowrap ${
+                    isCompleted || isCurrent
+                      ? 'text-secondary'
+                      : 'text-[#5c4b32]/50'
+                  }`}
+                >
+                  {step.label}
+                </span>
+                {i < steps.length - 1 && (
+                  <div
+                    className={`ml-1 h-0.5 w-4 flex-shrink-0 transition-colors ${
+                      isCompleted ? 'bg-secondary' : 'bg-border'
+                    }`}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-8 lg:grid-cols-5">
+          <div className="flex flex-col gap-8">
             {/* Form */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="flex flex-col gap-6 lg:col-span-3"
+              className="flex flex-col gap-6"
             >
               {/* Contact info */}
-              <div className="rounded-3xl bg-card p-6 shadow-sm">
+              <div className={`${stepClass('contact')} rounded-3xl bg-card p-6 shadow-sm`}>
                 <h2 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-5">
                   Información de contacto
                 </h2>
@@ -388,7 +532,7 @@ export function CheckoutClient() {
 
               {/* Shipping — only if physical product */}
               {hasPhysical && (
-                <div className="rounded-3xl bg-card p-6 shadow-sm">
+                <div className={`${stepClass('shipping')} rounded-3xl bg-card p-6 shadow-sm`}>
                   <h2 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-5">
                     Información de Envío
                   </h2>
@@ -523,14 +667,21 @@ export function CheckoutClient() {
               )}
 
               {/* Payment method */}
-              <div className="rounded-3xl bg-card p-6 shadow-sm">
+              <div
+                className={`${
+                  currentStepKey === 'payment-method' ||
+                  currentStepKey === 'confirm'
+                    ? 'block'
+                    : 'hidden'
+                } rounded-3xl bg-card p-6 shadow-sm`}
+              >
                 <h2 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-5">
                   Métodos de Pago
                 </h2>
-                <div className="grid gap-4 sm:grid-cols-3 mb-6">
+                <div className={`${currentStepKey === 'payment-method' ? 'grid' : 'hidden'} gap-4 sm:grid-cols-3 mb-6`}>
                   {/* Pago Movil */}
                   <label
-                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                    className={`cursor-pointer rounded-2xl border-2 p-4 lg:p-6 transition-all ${
                       form.paymentMethod === 'pago_movil'
                         ? 'border-secondary bg-secondary/5'
                         : 'border-border hover:border-secondary/40'
@@ -544,10 +695,10 @@ export function CheckoutClient() {
                       onChange={handleChange}
                       className="sr-only"
                     />
-                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">
+                    <div className="font-bold text-[#1a1a1a] mb-2 lg:mb-3 text-sm lg:text-base">
                       Pago Móvil
                     </div>
-                    <div className="text-xs text-[#5c4b32]">
+                    <div className="text-xs lg:text-sm text-[#5c4b32] lg:leading-relaxed">
                       <p>Banco Plaza</p>
                       <p>V-26.540.635</p>
                       <p>0424-5414804</p>
@@ -556,7 +707,7 @@ export function CheckoutClient() {
 
                   {/* Zelle */}
                   <label
-                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                    className={`cursor-pointer rounded-2xl border-2 p-4 lg:p-6 transition-all ${
                       form.paymentMethod === 'zelle'
                         ? 'border-secondary bg-secondary/5'
                         : 'border-border hover:border-secondary/40'
@@ -570,10 +721,10 @@ export function CheckoutClient() {
                       onChange={handleChange}
                       className="sr-only"
                     />
-                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">
+                    <div className="font-bold text-[#1a1a1a] mb-2 lg:mb-3 text-sm lg:text-base">
                       Zelle
                     </div>
-                    <div className="text-xs text-[#5c4b32] break-all">
+                    <div className="text-xs lg:text-sm text-[#5c4b32] lg:leading-relaxed break-all">
                       <p>mafeazcunes@gmail.com</p>
                       <p>Maria Azcunes</p>
                     </div>
@@ -581,7 +732,7 @@ export function CheckoutClient() {
 
                   {/* PayPal */}
                   <label
-                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                    className={`cursor-pointer rounded-2xl border-2 p-4 lg:p-6 transition-all ${
                       form.paymentMethod === 'paypal'
                         ? 'border-secondary bg-secondary/5'
                         : 'border-border hover:border-secondary/40'
@@ -595,21 +746,128 @@ export function CheckoutClient() {
                       onChange={handleChange}
                       className="sr-only"
                     />
-                    <div className="font-bold text-[#1a1a1a] mb-2 text-sm">
+                    <div className="font-bold text-[#1a1a1a] mb-2 lg:mb-3 text-sm lg:text-base">
                       PayPal
                     </div>
-                    <div className="text-xs text-[#5c4b32] break-all">
+                    <div className="text-xs lg:text-sm text-[#5c4b32] lg:leading-relaxed break-all">
                       <p>mafeazcunes@gmail.com</p>
                       <p>Maria Azcunes</p>
                     </div>
                   </label>
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    className="text-sm font-semibold text-[#5c4b32]"
-                    htmlFor="paymentReference"
-                  >
+                <div className={stepClass('confirm')}>
+                  {/* Recap of selected payment method */}
+                  <div className="mb-6 rounded-2xl bg-[#A7895C]/10 p-6 text-[#5c4b32]">
+                    <p className="font-serif text-2xl font-bold mb-6">
+                      {
+                        PAYMENT_METHOD_DETAILS[
+                          form.paymentMethod as keyof typeof PAYMENT_METHOD_DETAILS
+                        ]?.title
+                      }
+                    </p>
+                    <div className="space-y-4">
+                      {/* Monto a pagar */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          copyPaymentDetails(
+                            form.paymentMethod === 'pago_movil' &&
+                              bcvRate
+                              ? `${(total * bcvRate).toLocaleString('es-VE', {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })} Bs`
+                              : `${total.toFixed(2)} USD`,
+                          )
+                        }
+                        className={`flex w-full items-center justify-between gap-3 rounded-lg p-4 text-left transition active:scale-95 ${
+                          copiedMethod ===
+                          (form.paymentMethod === 'pago_movil' &&
+                          bcvRate
+                            ? `${(total * bcvRate).toLocaleString('es-VE', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })} Bs`
+                            : `${total.toFixed(2)} USD`)
+                            ? 'bg-secondary/20'
+                            : 'bg-white/60 hover:bg-white/80'
+                        }`}
+                      >
+                        <p className="font-semibold text-base leading-relaxed text-[#5c4b32]">
+                          {form.paymentMethod === 'pago_movil' &&
+                          bcvRate
+                            ? `${(total * bcvRate).toLocaleString('es-VE', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })} Bs`
+                            : `${total.toFixed(2)} USD`}
+                        </p>
+                        <div className={`flex-shrink-0 rounded-lg p-2 transition ${
+                          copiedMethod ===
+                          (form.paymentMethod === 'pago_movil' &&
+                          bcvRate
+                            ? `${(total * bcvRate).toLocaleString('es-VE', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })} Bs`
+                            : `${total.toFixed(2)} USD`)
+                            ? 'bg-secondary/30 text-secondary'
+                            : 'bg-secondary/10 text-secondary'
+                        }`}>
+                          {copiedMethod ===
+                          (form.paymentMethod === 'pago_movil' &&
+                          bcvRate
+                            ? `${(total * bcvRate).toLocaleString('es-VE', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })} Bs`
+                            : `${total.toFixed(2)} USD`) ? (
+                            <Check size={20} />
+                          ) : (
+                            <Copy size={20} />
+                          )}
+                        </div>
+                      </button>
+
+                      {/* Datos de la cuenta */}
+                      {PAYMENT_METHOD_DETAILS[
+                        form.paymentMethod as keyof typeof PAYMENT_METHOD_DETAILS
+                      ]?.lines.map((line, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => copyPaymentDetails(line)}
+                          className={`flex w-full items-center justify-between gap-3 rounded-lg p-4 text-left transition active:scale-95 ${
+                            copiedMethod === line
+                              ? 'bg-secondary/20'
+                              : 'bg-white/60 hover:bg-white/80'
+                          }`}
+                        >
+                          <p className="font-semibold text-base leading-relaxed text-[#5c4b32]">
+                            {line}
+                          </p>
+                          <div className={`flex-shrink-0 rounded-lg p-2 transition ${
+                            copiedMethod === line
+                              ? 'bg-secondary/30 text-secondary'
+                              : 'bg-secondary/10 text-secondary'
+                          }`}>
+                            {copiedMethod === line ? (
+                              <Check size={20} />
+                            ) : (
+                              <Copy size={20} />
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      className="text-sm font-semibold text-[#5c4b32]"
+                      htmlFor="paymentReference"
+                    >
                     Número de referencia o recibo *
                   </label>
                   <Input
@@ -670,6 +928,7 @@ export function CheckoutClient() {
                     </p>
                   </div>
                 )}
+                </div>
               </div>
 
               {error && (
@@ -677,16 +936,33 @@ export function CheckoutClient() {
                   {error}
                 </p>
               )}
+
+              {/* Step navigation */}
+              <div className="flex items-center gap-3">
+                {!isFirstStep && (
+                  <button
+                    type="button"
+                    onClick={goBack}
+                    className="flex-1 rounded-full border-2 border-border py-3 text-sm font-bold text-[#5c4b32] transition hover:border-[#A7895C]/40"
+                  >
+                    Volver
+                  </button>
+                )}
+                {!isLastStep && (
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    className="flex-1 rounded-full bg-secondary py-3 text-sm font-bold text-white transition hover:opacity-90"
+                  >
+                    Siguiente
+                  </button>
+                )}
+              </div>
             </motion.div>
 
             {/* Order summary */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="lg:col-span-2"
-            >
-              <div className="sticky top-28 rounded-3xl bg-card p-6 shadow-sm">
+            <div className={stepClass('confirm')}>
+              <div className="rounded-3xl bg-card p-6 shadow-sm">
                 <h2 className="font-serif text-xl font-bold text-[#1a1a1a] mb-5">
                   Tu pedido
                 </h2>
@@ -780,7 +1056,7 @@ export function CheckoutClient() {
                   <p>Por favor mantén esta ventana abierta.</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </form>
       </div>

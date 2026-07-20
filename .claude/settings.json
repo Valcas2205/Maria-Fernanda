@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:\\\\Users\\\\ejhea\\\\.claude\\\\plans\")",
+      "Bash(npx tsc *)",
+      "Bash(curl -s http://localhost:3001/tienda/checkout)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\ejhea\\.claude\\plans"
+    ]
+  }
+}
