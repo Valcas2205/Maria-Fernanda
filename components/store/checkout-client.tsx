@@ -175,15 +175,18 @@ export function CheckoutClient() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const isDocNumberRequired = form.paymentMethod !== 'zelle' && form.paymentMethod !== 'paypal';
+
     if (
       !form.firstName ||
       !form.lastName ||
       !form.email ||
       !form.paymentReference ||
-      !form.docNumber
+      (isDocNumberRequired && !form.docNumber)
     ) {
       setError(
-        'Por favor completa tu nombre, apellido, correo electrónico y referencia de pago.',
+        'Por favor completa tu nombre, apellido, correo electrónico, referencia de pago' +
+        (isDocNumberRequired ? ' y cédula de identidad.' : '.')
       );
       return;
     }
