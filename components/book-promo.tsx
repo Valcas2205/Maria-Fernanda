@@ -91,7 +91,7 @@ export function BookPromo() {
                     <BookOpen size={18} className="text-[#A7895C]" />
                   </div>
                   <span className="text-sm font-bold uppercase tracking-widest text-[#A7895C]">
-                    Libro Físico
+                    Pack de Fichas
                   </span>
                 </div>
 
@@ -114,7 +114,7 @@ export function BookPromo() {
                     className="relative z-10"
                   >
                     <Image
-                      src="/images/libroportada.jpeg"
+                      src="/images/image0.jpeg"
                       alt="Conócete y comienza a quererte"
                       width={220}
                       height={300}
@@ -134,7 +134,7 @@ export function BookPromo() {
                       $0.08
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#A7895C] px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 group-hover:gap-3 group-hover:bg-[#A7895C]/90">
-                      Ver libro
+                      Ver fichas
                       <ArrowRight size={14} />
                     </span>
                   </div>

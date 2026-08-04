@@ -15,16 +15,16 @@ interface OrderApprovedEmailProps {
   firstName: string;
   orderId: string;
   items: Array<{ name: string; quantity: number; price?: number }>;
-  hasDigitalAttachments?: boolean;
-  hasPhysicalItems?: boolean;
+  digitalItemsCount?: number;
+  physicalItemsCount?: number;
 }
 
 export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = ({
   firstName,
   orderId,
   items,
-  hasDigitalAttachments = false,
-  hasPhysicalItems = false,
+  digitalItemsCount = 0,
+  physicalItemsCount = 0,
 }) => {
   return (
     <Html>
@@ -41,14 +41,24 @@ export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = (
           </Text>
 
           <Section style={alertCard}>
-            <Heading as="h2" style={alertHeading}>¡Gracias por tu compra!</Heading>
+            <Heading as="h2" style={alertHeading}>¡Gracias por tu compra!🤎</Heading>
             <Text style={alertText}>
-              {hasDigitalAttachments && hasPhysicalItems ? (
-                "¡Buenas noticias! Los productos digitales que adquiriste se encuentran adjuntos a este correo en formato PDF para que los descargues de inmediato. Tus productos físicos se encuentran en preparación y te notificaremos pronto sobre su envío."
-              ) : hasDigitalAttachments && !hasPhysicalItems ? (
-                "¡Buenas noticias! Los productos digitales que adquiriste se encuentran adjuntos a este correo en formato PDF para que los descargues de inmediato."
+              {digitalItemsCount > 0 && physicalItemsCount > 0 ? (
+                <>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda..<br /><br />
+                Abajo encontraras los documentos para descargarlos y comenzarlos a disfrutarlos.. mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible..<br /><br />
+                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
+              ) : digitalItemsCount > 1 && physicalItemsCount === 0 ? (
+                <>Estoy muy emocionada de que puedas obtener estas guías que estoy segura te serán de mucha ayuda..<br /><br />
+                Abajo encontraras los documento para descargarlos y comenzarlos a disfrutar..<br /><br />
+                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
+              ) : digitalItemsCount === 1 && physicalItemsCount === 0 ? (
+                <>Estoy muy emocionada de que puedas obtener esta guía que estoy segura te será de mucha ayuda..<br /><br />
+                Abajo encontraras el documento para descargarlo y comenzarlo a disfrutar..<br /><br />
+                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
               ) : (
-                "Tus productos o servicios te serán enviados muy pronto. Por ahora, nos encontramos enviando el material o los accesos manualmente, así que por favor mantente atento(a) a tu bandeja de entrada en las próximas horas."
+                <>Estoy muy emocionada de hacerte llegar este producto que estoy segura te será de mucha ayuda..<br /><br />
+                Empezaremos a organizar todo para que lo tengas en tus manos lo antes posible..<br /><br />
+                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
               )}
             </Text>
           </Section>
