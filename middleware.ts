@@ -13,6 +13,11 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Permitir que pasen los webhooks sin autenticación de QA
+  if (req.nextUrl.pathname.startsWith('/api/webhooks/')) {
+    return NextResponse.next();
+  }
+
   if (basicAuth) {
     const authValue = basicAuth.split(' ')[1];
     const [providedUser, providedPwd] = atob(authValue).split(':');
