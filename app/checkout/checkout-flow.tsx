@@ -56,6 +56,7 @@ const formatPhoneNumber = (value: string): string => {
 const METHOD_LABELS: Record<PaymentMethod, string> = {
   zelle: "Zelle",
   pagomovil: "Pago Móvil",
+  paypal: "Paypal",
 }
 
 const usd = new Intl.NumberFormat("en-US", {
@@ -86,6 +87,8 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
   })
   const [method, setMethod] = useState<PaymentMethod>("zelle")
   const [reference, setReference] = useState("")
+  const [docType, setDocType] = useState("V")
+  const [docNumber, setDocNumber] = useState("")
 
   useEffect(() => {
     let cancelled = false
@@ -131,6 +134,7 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
       zelle: context?.checkout.methodsEnabled.includes("zelle") ?? false,
       pagomovil:
         context?.checkout.methodsEnabled.includes("pagomovil") ?? false,
+      paypal: context?.checkout.methodsEnabled.includes("paypal") ?? false,
     }),
     [context],
   )
@@ -168,12 +172,18 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
         setError(null)
         if (!token || !customerId)
           throw new Error("Faltan datos del checkout. Reintenta.")
-        await submitCheckoutPaymentAction(token, {
+        const finalStatus = method === "pagomovil" ? "verifying" : "pending"
+        const out = await submitCheckoutPaymentAction(token, {
           customerId,
           method,
-          metadata: { reference, source: "todoesunbalance_checkout_v1" },
+          metadata: {
+            reference,
+            senderId: `${docType}${docNumber}`,
+            source: "todoesunbalance_checkout_v1"
+          },
+          status: finalStatus,
         })
-        router.push("/thank-you")
+        router.push(`/thank-you?paymentId=${out.paymentId}&status=${finalStatus}&method=${method}`)
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "No se pudo enviar el pago.",
@@ -325,7 +335,7 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
           </h2>
 
           <div className="mb-4 flex flex-wrap gap-3">
-            {(["zelle", "pagomovil"] as PaymentMethod[]).map((m) => (
+            {(["zelle", "pagomovil", "paypal"] as PaymentMethod[]).map((m) => (
               <button
                 key={m}
                 type="button"
@@ -370,8 +380,36 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
             />
           ) : null}
 
+          {method !== 'zelle' && method !== 'paypal' && (
+            <div className="grid gap-1.5 mb-4">
+              <Label htmlFor="docNumber">Cédula de Identidad (Titular de la cuenta) *</Label>
+              <div className="flex h-9 w-full min-w-0 items-center rounded-md border border-input bg-transparent shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50">
+                <select
+                  className="h-full bg-transparent pl-3 pr-1 text-base outline-none text-foreground border-r border-input"
+                  value={docType}
+                  onChange={(e) => setDocType(e.target.value)}
+                >
+                  <option value="V">V</option>
+                  <option value="E">E</option>
+                  <option value="J">J</option>
+                  <option value="G">G</option>
+                  <option value="P">P</option>
+                  <option value="C">C</option>
+                </select>
+                <input
+                  id="docNumber"
+                  type="text"
+                  className="h-full flex-1 bg-transparent px-3 py-1 text-base outline-none placeholder:text-muted-foreground"
+                  placeholder="12345678"
+                  value={docNumber}
+                  onChange={(e) => setDocNumber(e.target.value.replace(/\D/g, ""))}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-1.5">
-            <Label htmlFor="reference">Referencia / comprobante</Label>
+            <Label htmlFor="reference">Referencia / comprobante *</Label>
             <Input
               id="reference"
               placeholder="Nro. de referencia de tu transferencia"
@@ -385,7 +423,7 @@ export function CheckoutFlow({ subscriptionId, timePeriod, surface }: Props) {
               Volver
             </Button>
             <Button
-              disabled={isPending || !reference.trim()}
+              disabled={isPending || !reference.trim() || !docNumber.trim()}
               onClick={submitPayment}
             >
               {isPending ? "Enviando…" : "Enviar pago pendiente"}

@@ -105,8 +105,8 @@ export async function POST(req: NextRequest) {
       if (payload.customer?.email) {
         const items = payload.metadata?.items || [];
         const attachments = [];
-        let hasDigitalAttachments = false;
-        let hasPhysicalItems = false;
+        let digitalItemsCount = 0;
+        let physicalItemsCount = 0;
 
         for (const item of items) {
           const product = products.find(p => p.id === item.id);
@@ -119,12 +119,12 @@ export async function POST(req: NextRequest) {
                   filename: product.fileName,
                   content: fileBuffer,
                 });
-                hasDigitalAttachments = true;
+                digitalItemsCount += (item.quantity || 1);
               } catch (err) {
                 console.error(`[Webhook] Error al leer archivo ${product.fileName}:`, err);
               }
             } else if (product.type === "physical") {
-              hasPhysicalItems = true;
+              physicalItemsCount += (item.quantity || 1);
             }
           }
         }
@@ -137,8 +137,8 @@ export async function POST(req: NextRequest) {
             firstName: payload.customer.firstName || 'Cliente',
             orderId: payload.paymentId,
             items: items,
-            hasDigitalAttachments,
-            hasPhysicalItems,
+            digitalItemsCount,
+            physicalItemsCount,
           }) as React.ReactElement,
           attachments: attachments.length > 0 ? attachments : undefined,
         })

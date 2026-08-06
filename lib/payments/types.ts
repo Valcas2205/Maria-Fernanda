@@ -1,4 +1,4 @@
-export type PaymentMethod = "zelle" | "pagomovil"
+export type PaymentMethod = "zelle" | "pagomovil" | "paypal"
 
 export type CheckoutSurface = "pricing" | "cart" | "product" | "other"
 
@@ -42,4 +42,5 @@ export interface PaymentPayload {
   amountUsd?: number
   amountVes?: number
   metadata?: Record<string, unknown>
+  status?: "pending" | "verifying" | "approved" | "rejected"
 }

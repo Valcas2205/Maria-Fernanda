@@ -24,7 +24,7 @@ export function FeaturedProduct({ product }: Props) {
 
   return (
     <section className="px-6 py-10 md:py-16">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-[1050px]">
         {/* Section label */}
         <div className="mb-8 flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#A7895C]/20">
@@ -35,8 +35,8 @@ export function FeaturedProduct({ product }: Props) {
           </span>
         </div>
 
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#A7895C]/10 via-card to-secondary/10 px-5 py-8 md:p-12 lg:p-16 shadow-lg">
-          <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-16">
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#A7895C]/10 via-card to-secondary/10 px-5 py-8 md:px-10 md:py-8 lg:px-12 lg:py-10 shadow-lg">
+          <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-12">
             
             {/* Mobile Header (Badges + Title + Subtitle) - Only visible on mobile */}
             <motion.div
@@ -64,9 +64,6 @@ export function FeaturedProduct({ product }: Props) {
                 <h2 className="font-serif text-[32px] leading-[1.15] font-bold text-[#1a1a1a]">
                   {product.name}
                 </h2>
-                <p className="mt-2 font-serif text-lg italic text-[#5c4b32]">
-                  {product.tagline}
-                </p>
               </div>
             </motion.div>
 
@@ -76,9 +73,9 @@ export function FeaturedProduct({ product }: Props) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="relative flex-shrink-0"
+              className="relative flex-shrink-0 flex flex-col items-center md:items-start gap-8 lg:gap-10"
             >
-              <div className="relative h-64 w-52 md:h-80 md:w-64 lg:h-96 lg:w-72">
+              <div className="relative h-64 w-52 md:h-80 md:w-64 lg:h-96 lg:w-72 mx-auto">
                 {/* Decorative shadow */}
                 <div className="absolute -bottom-4 left-1/2 h-8 w-3/4 -translate-x-1/2 rounded-full bg-[#A7895C]/20 blur-xl" />
                 <div className="relative h-full w-full overflow-hidden rounded-2xl shadow-2xl">
@@ -90,6 +87,18 @@ export function FeaturedProduct({ product }: Props) {
                     sizes="(max-width: 768px) 208px, (max-width: 1024px) 256px, 288px"
                   />
                 </div>
+              </div>
+
+              {/* Features (moved below image) */}
+              <div className="w-full max-w-[280px] mx-auto md:mx-0 px-2">
+                <ul className="flex flex-col gap-3">
+                  {product.features.slice(0, 4).map((f) => (
+                    <li key={f} className="flex items-start gap-3 text-sm md:text-[15px] font-sans font-medium text-[#2a2215]">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#A7895C]" />
+                      <span className="leading-snug">{f}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </motion.div>
 
@@ -122,25 +131,16 @@ export function FeaturedProduct({ product }: Props) {
                   <h2 className="font-serif text-4xl font-bold text-[#1a1a1a] md:text-5xl lg:text-6xl">
                     {product.name}
                   </h2>
-                  <p className="mt-2 font-serif text-xl italic text-[#5c4b32]">
-                    {product.tagline}
-                  </p>
                 </div>
               </div>
 
-              <p className="text-base leading-relaxed text-[#5c4b32] md:text-lg">
-                {product.description}
-              </p>
-
-              {/* Features */}
-              <ul className="flex flex-col gap-2">
-                {product.features.slice(0, 4).map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#5c4b32]">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#A7895C]" />
-                    {f}
-                  </li>
+              <div className="text-base leading-relaxed text-[#2a2215] font-sans font-medium md:text-[17px]">
+                {product.description.split('\n').map((line, i) => (
+                  <p key={i} className={line.trim() === '' ? 'mb-4' : ''}>{line}</p>
                 ))}
-              </ul>
+              </div>
+
+              {/* Features removed from here */}
 
               {/* Price & CTA */}
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
