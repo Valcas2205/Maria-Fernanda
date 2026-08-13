@@ -41,9 +41,9 @@ function EbookCard({ product, index }: EbookCardProps) {
       <Link href={`/tienda/${product.slug}`} className="group block h-full">
         <div className="flex h-full flex-col overflow-hidden rounded-3xl bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           {/* Image / cover */}
-          <div className={`relative flex h-56 w-full items-center justify-center overflow-hidden ${colors.bg}`}>
+          <div className={`relative flex h-56 lg:h-72 w-full items-center justify-center overflow-hidden ${colors.bg}`}>
             {product.images?.[0] ? (
-              <div className="relative h-44 w-36 transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:rotate-2">
+              <div className="relative h-44 w-36 lg:h-56 lg:w-44 transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:rotate-2">
                 {/* Shadow */}
                 <div className="absolute -bottom-3 left-1/2 w-[80%] -translate-x-1/2 h-4 bg-black/15 blur-md rounded-[100%]" />
                 
@@ -90,9 +90,42 @@ function EbookCard({ product, index }: EbookCardProps) {
             <h3 className="font-serif text-2xl font-bold text-[#1a1a1a] group-hover:text-[#A7895C] transition-colors">
               {product.name}
             </h3>
-            <p className="text-sm leading-relaxed text-[#5c4b32] flex-1">
-              {product.description}
-            </p>
+            <div className="text-sm leading-relaxed text-[#5c4b32] flex-1 flex flex-col gap-3">
+              {(() => {
+                const parts = product.description.split(/(?:💖|💗|🤎)\s*¿Para quién es\?/);
+                const mainDesc = parts[0];
+                const forWhomList = parts.length > 1 ? parts[1].trim().split('\n') : [];
+                return (
+                  <>
+                    <div className="space-y-2">
+                      {mainDesc.split('\n').map((line, j) => (
+                        <p key={j}>{line}</p>
+                      ))}
+                    </div>
+                    {forWhomList.length > 0 && (
+                      <div className="mt-2 rounded-2xl bg-[#A7895C]/5 p-4 border border-[#A7895C]/10">
+                        <h4 className="font-serif text-sm font-bold text-[#A7895C] mb-3 flex items-center gap-1.5">
+                           ¿Para quién es?
+                        </h4>
+                        <ul className="flex flex-col gap-2.5">
+                          {forWhomList.slice(0, 2).map((item, k) => (
+                            <li key={k} className="flex items-start gap-2 text-[13px] md:text-sm">
+                              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#A7895C]" />
+                              <span className="leading-snug text-[#3d311e]">{item.replace(/^- /, '')}</span>
+                            </li>
+                          ))}
+                          {forWhomList.length > 2 && (
+                            <li className="mt-1 text-[13px] font-medium text-[#A7895C] italic">
+                              + Clic para ver todos los detalles...
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
 
             {/* Price + CTA */}
             <div className="mt-4 flex items-center justify-between">
@@ -135,7 +168,7 @@ export function EbookGrid({ products }: Props) {
             Descarga inmediata · Acceso permanente
           </p>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:gap-12">
           {products.map((product, i) => (
             <EbookCard key={product.id} product={product} index={i} />
           ))}

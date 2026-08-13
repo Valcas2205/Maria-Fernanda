@@ -42,25 +42,39 @@ export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = (
 
           <Section style={alertCard}>
             <Heading as="h2" style={alertHeading}>¡Gracias por tu compra!🤎</Heading>
-            <Text style={alertText}>
-              {digitalItemsCount > 0 && physicalItemsCount > 0 ? (
-                <>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda..<br /><br />
-                Abajo encontraras los documentos para descargarlos y comenzarlos a disfrutarlos.. mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible..<br /><br />
-                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
-              ) : digitalItemsCount > 1 && physicalItemsCount === 0 ? (
-                <>Estoy muy emocionada de que puedas obtener estas guías que estoy segura te serán de mucha ayuda..<br /><br />
-                Abajo encontraras los documento para descargarlos y comenzarlos a disfrutar..<br /><br />
-                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
-              ) : digitalItemsCount === 1 && physicalItemsCount === 0 ? (
-                <>Estoy muy emocionada de que puedas obtener esta guía que estoy segura te será de mucha ayuda..<br /><br />
-                Abajo encontraras el documento para descargarlo y comenzarlo a disfrutar..<br /><br />
-                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
+            {digitalItemsCount > 0 && physicalItemsCount > 0 ? (
+              digitalItemsCount > 1 ? (
+                <>
+                  <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda..</Text>
+                  <Text style={alertText}>Abajo encontrarás los documentos para descargarlos y comenzarlos a disfrutar.. mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible..</Text>
+                  <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
+                </>
               ) : (
-                <>Estoy muy emocionada de hacerte llegar este producto que estoy segura te será de mucha ayuda..<br /><br />
-                Empezaremos a organizar todo para que lo tengas en tus manos lo antes posible..<br /><br />
-                No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</>
-              )}
-            </Text>
+                <>
+                  <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda..</Text>
+                  <Text style={alertText}>Abajo encontrarás el documento para descargarlo y comenzarlo a disfrutar.. mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible..</Text>
+                  <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
+                </>
+              )
+            ) : digitalItemsCount > 1 && physicalItemsCount === 0 ? (
+              <>
+                <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías que estoy segura te serán de mucha ayuda..</Text>
+                <Text style={alertText}>Abajo encontrarás los documentos para descargarlos y comenzarlos a disfrutar..</Text>
+                <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
+              </>
+            ) : digitalItemsCount === 1 && physicalItemsCount === 0 ? (
+              <>
+                <Text style={alertText}>Estoy muy emocionada de que puedas obtener esta guía que estoy segura te será de mucha ayuda..</Text>
+                <Text style={alertText}>Abajo encontrarás el documento para descargarlo y comenzarlo a disfrutar..</Text>
+                <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
+              </>
+            ) : (
+              <>
+                <Text style={alertText}>Estoy muy emocionada de hacerte llegar este producto que estoy segura te será de mucha ayuda..</Text>
+                <Text style={alertText}>Empezaremos a organizar todo para que lo tengas en tus manos lo antes posible..</Text>
+                <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
+              </>
+            )}
           </Section>
 
           <Heading as="h3" style={subheading}>Resumen de lo que adquiriste</Heading>
@@ -134,17 +148,23 @@ const alertCard = {
 };
 
 const alertHeading = {
-  margin: '0 0 10px 0',
+  margin: '0 0 16px 0',
   color: '#A7895C',
   fontSize: '20px',
   fontWeight: 'bold',
 };
 
 const alertText = {
-  margin: '0',
+  margin: '0 0 16px 0',
   color: '#5c4b32',
   fontSize: '15px',
   lineHeight: '22px',
+  textAlign: 'center' as const,
+};
+
+const alertTextLast = {
+  ...alertText,
+  margin: '0',
 };
 
 const subheading = {

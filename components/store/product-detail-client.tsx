@@ -147,7 +147,7 @@ export function ProductDetailClient({ product }: Props) {
               className="bg-white/40 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-sm border border-white/50"
             >
               <h3 className={`font-serif text-xl font-bold text-[#1a1a1a] ${isPhysical ? 'mb-2' : 'mb-5'}`}>
-                {isPhysical ? '✨ Este producto te va a aportar:' : '¿Qué incluye?'}
+                {isPhysical ? '✨ Este producto te va a aportar:' : '¿Para quién es?'}
               </h3>
               {isPhysical && (
                 <p className="mb-5 text-sm md:text-base text-[#5c4b32] font-medium">
