@@ -35,7 +35,7 @@ export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = (
           <Heading style={heading}>
             ¡Tu orden ha sido confirmada, {firstName}! 🎉
           </Heading>
-          
+
           <Text style={textCentered}>
             El pago de tu orden <strong style={{ color: '#A7895C' }}>#{orderId.split('-')[0]}</strong> ha sido verificado con éxito.
           </Text>
@@ -45,40 +45,40 @@ export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = (
             {digitalItemsCount > 0 && physicalItemsCount > 0 ? (
               digitalItemsCount > 1 ? (
                 <>
-                  <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda..</Text>
-                  <Text style={alertText}>Abajo encontrarás los documentos para descargarlos y comenzarlos a disfrutar.. mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible..</Text>
+                  <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda.</Text>
+                  <Text style={alertText}>Abajo encontrarás los documentos para descargarlos y comenzarlos a disfrutar... Mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible.</Text>
                   <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
                 </>
               ) : (
                 <>
-                  <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda..</Text>
-                  <Text style={alertText}>Abajo encontrarás el documento para descargarlo y comenzarlo a disfrutar.. mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible..</Text>
+                  <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías y productos que estoy segura te serán de mucha ayuda.</Text>
+                  <Text style={alertText}>Abajo encontrarás el documento para descargarlo y comenzarlo a disfrutar... Mientras tanto, organizaremos todo para que tengas nuestro producto estrella en tus manos lo antes posible.</Text>
                   <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
                 </>
               )
             ) : digitalItemsCount > 1 && physicalItemsCount === 0 ? (
               <>
-                <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías que estoy segura te serán de mucha ayuda..</Text>
-                <Text style={alertText}>Abajo encontrarás los documentos para descargarlos y comenzarlos a disfrutar..</Text>
+                <Text style={alertText}>Estoy muy emocionada de que puedas obtener estas guías que estoy segura te serán de mucha ayuda.</Text>
+                <Text style={alertText}>Abajo encontrarás los documentos para descargarlos y comenzarlos a disfrutar.</Text>
                 <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
               </>
             ) : digitalItemsCount === 1 && physicalItemsCount === 0 ? (
               <>
-                <Text style={alertText}>Estoy muy emocionada de que puedas obtener esta guía que estoy segura te será de mucha ayuda..</Text>
-                <Text style={alertText}>Abajo encontrarás el documento para descargarlo y comenzarlo a disfrutar..</Text>
+                <Text style={alertText}>Estoy muy emocionada de que puedas obtener esta guía que estoy segura te será de mucha ayuda.</Text>
+                <Text style={alertText}>Abajo encontrarás el documento para descargarlo y comenzarlo a disfrutar.</Text>
                 <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
               </>
             ) : (
               <>
-                <Text style={alertText}>Estoy muy emocionada de hacerte llegar este producto que estoy segura te será de mucha ayuda..</Text>
-                <Text style={alertText}>Empezaremos a organizar todo para que lo tengas en tus manos lo antes posible..</Text>
+                <Text style={alertText}>Estoy muy emocionada de hacerte llegar este producto que estoy segura te será de mucha ayuda.</Text>
+                <Text style={alertText}>Empezaremos a organizar todo para que lo tengas en tus manos lo antes posible.</Text>
                 <Text style={alertTextLast}>No olvides que con tu compra estás aportando un 10% a las familias afectadas por el terremoto en Venezuela✨</Text>
               </>
             )}
           </Section>
 
           <Heading as="h3" style={subheading}>Resumen de lo que adquiriste</Heading>
-          
+
           <Section style={itemsList}>
             {items && items.length > 0 ? (
               items.map((item, i) => (
@@ -92,11 +92,11 @@ export const OrderApprovedEmail: React.FC<Readonly<OrderApprovedEmailProps>> = (
           </Section>
 
           <Hr style={hr} />
-          
+
           <Text style={footerText}>
             Si no recibes el material en las próximas 24 horas o tienes alguna duda, responde a este correo y te ayudaremos con mucho gusto.
           </Text>
-          
+
           <Text style={footer}>
             Todo es un Balance © {new Date().getFullYear()}
           </Text>
