@@ -16,7 +16,7 @@ const badges = [
     color: "text-[#A7895C]",
     bg: "bg-[#A7895C]/15",
     label: "Envíos a toda Venezuela",
-    sub: "Y disponible en Amazon",
+    sub: "",
   },
   {
     icon: Zap,

@@ -87,21 +87,11 @@ export function StoreHero() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-2 hidden lg:flex flex-col items-center gap-4 sm:flex-row lg:items-start w-full sm:justify-center lg:justify-start"
             >
-              <button
-                onClick={() => {
-                  window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' })
-                }}
-                className="w-full sm:w-auto rounded-full bg-[#A7895C] px-10 py-4 text-lg sm:text-base font-semibold text-white transition-opacity hover:opacity-90 text-center"
+              <Link
+                href="/tienda/conocete-y-comienza-a-quererte"
+                className="w-full sm:w-64 lg:w-80 flex items-center justify-center rounded-full bg-[#A7895C] px-10 py-4 text-lg sm:text-lg lg:text-xl font-semibold text-white transition-opacity hover:opacity-90 text-center"
               >
                 Comprar ahora
-              </button>
-              <Link
-                href="https://amazon.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto rounded-full border-2 border-[#A7895C] px-10 py-4 text-lg sm:text-base font-semibold text-[#A7895C] transition-colors hover:bg-[#A7895C]/10 text-center"
-              >
-                Comprar en Amazon
               </Link>
             </motion.div>
           </div>
@@ -149,21 +139,11 @@ export function StoreHero() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-2 flex lg:hidden flex-col items-center gap-4 sm:flex-row w-full sm:justify-center"
           >
-            <button
-              onClick={() => {
-                window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' })
-              }}
-              className="w-full sm:w-auto rounded-full bg-[#A7895C] px-10 py-4 text-lg sm:text-base font-semibold text-white transition-opacity hover:opacity-90 text-center"
+            <Link
+              href="/tienda/conocete-y-comienza-a-quererte"
+              className="w-full sm:w-64 lg:w-80 flex items-center justify-center rounded-full bg-[#A7895C] px-10 py-4 text-lg sm:text-lg lg:text-xl font-semibold text-white transition-opacity hover:opacity-90 text-center"
             >
               Comprar ahora
-            </button>
-            <Link
-              href="https://amazon.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto rounded-full border-2 border-[#A7895C] px-10 py-4 text-lg sm:text-base font-semibold text-[#A7895C] transition-colors hover:bg-[#A7895C]/10 text-center"
-            >
-              Comprar en Amazon
             </Link>
           </motion.div>
 

@@ -23,7 +23,7 @@ export function FeaturedProduct({ product }: Props) {
   }
 
   return (
-    <section className="px-6 py-10 md:py-16">
+    <section id="productos" className="px-6 py-10 md:py-16">
       <div className="mx-auto max-w-[1050px]">
         {/* Section label */}
         <div className="mb-8 flex items-center gap-3">
