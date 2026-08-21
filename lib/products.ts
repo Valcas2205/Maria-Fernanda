@@ -28,10 +28,10 @@ export const products: Product[] = [
     longDescription: `✨Conjunto de fichas pensadas para quienes están buscando un proceso profundo de autoconocimiento y amor propio.\nEste conjunto de fichas busca, mediante temas específicos, que conectes nuevamente con tu valor y amor propio.\nEsto incluye autoconocimiento, introspección, reflexión, ejercicios prácticos, mejorar la autoconfianza, aprender nuevas habilidades.\n\nLo que encontrarás aquí será información clave y necesaria para poder relacionarnos de manera sana con nosotros mismos.\n\n🤎¿Para quién es?\n- Para quienes deseen explorarse y conocerse a si mismos.\n- Para quienes han pasado situaciones dolorosas que han perjudicado su autoestima, para reconectar nuevamente con su valor.\n- Para quienes se han sentido últimamente desmotivados y notan que han descuidado la relación con ellos mismos.\n- Para los que deseen aprender las habilidades necesarias para mejorar sus vidas en sus distintas áreas (personal, profesional, social, familiar, amorosa y espiritual.\n\n💌Un recurso flexible\nNo necesitas seguir un orden ni completar las fichas por completo. Puedes leerlas cuando lo necesites y desees.\nAquí encontrarás temas interesantes. La recomendación de la psicóloga es a no conformarse con esto, te invita a seguir explorando tu mundo emocional, seguir fortaleciendo la relación contigo mismx, a seguir explorando información valiosa con respecto al tema, ya que la psicoeducación es necesaria para construir esas bases sólidas en la relación con nosotros mismos.\nEsta es una compañía emocional, intencional y amorosa, diseñada para mostrarte la importancia que tiene la relación que tenemos con nosotros mismos en nuestro bienestar emocional.`,
     price: 0.08,
     images: [
-      '/images/image0.jpeg',
-      '/images/image1.png',
-      '/images/image2.png',
-      '/images/image3.png',
+      '/images/pack-fichas-3.png',
+      '/images/pack-fichas-1.png',
+      '/images/pack-fichas-2.png',
+      '/images/pack-fichas-4.png',
     ],
     features: [
       'Conocerte a profundidad',

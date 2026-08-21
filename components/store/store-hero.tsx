@@ -121,7 +121,7 @@ export function StoreHero() {
             >
               <video
                 ref={videoRef}
-                src="/images/Video1.mp4"
+                src="/hero-reel.mp4"
                 autoPlay
                 loop
                 muted={isMuted}

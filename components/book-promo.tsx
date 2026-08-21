@@ -104,7 +104,7 @@ export function BookPromo() {
                     className="relative z-10"
                   >
                     <Image
-                      src="/images/image0.jpeg"
+                      src="/images/pack-fichas-3.png"
                       alt="Conócete y comienza a quererte"
                       width={220}
                       height={300}
