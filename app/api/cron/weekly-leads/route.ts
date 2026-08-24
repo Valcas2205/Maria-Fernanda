@@ -1,8 +1,8 @@
-import { Pool } from "pg";
-import { Resend } from "resend";
-import { NextResponse } from "next/server";
+import { Pool } from 'pg';
+import { Resend } from 'resend';
+import { NextResponse } from 'next/server';
 
-export const runtime = "nodejs";
+export const runtime = 'nodejs';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -11,9 +11,9 @@ const pool = new Pool({
 
 export async function GET(request: Request) {
   // Authentication check for cron job
-  const authHeader = request.headers.get("authorization");
+  const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response('Unauthorized', { status: 401 });
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     }
 
     if (rows.length === 0) {
-      return NextResponse.json({ message: "Sin nuevos leads esta semana" });
+      return NextResponse.json({ message: 'Sin nuevos leads esta semana' });
     }
 
     const leadListHtml = rows
@@ -43,12 +43,12 @@ export async function GET(request: Request) {
       <tr>
         <td style="padding: 8px; border-bottom: 1px solid #eee;">${lead.email}</td>
         <td style="padding: 8px; border-bottom: 1px solid #eee;">${new Date(
-          lead.created_at
+          lead.created_at,
         ).toLocaleDateString()}</td>
       </tr>
-    `
+    `,
       )
-      .join("");
+      .join('');
 
     const emailHtml = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
@@ -72,16 +72,22 @@ export async function GET(request: Request) {
     `;
 
     await resend.emails.send({
-      from: "Maria Fernanda <hola@todoesunbalance.com>",
-      to: [process.env.NOTIFICATION_EMAIL || "todoesunbalance@gmail.com"],
-      subject: "Resumen Semanal: Botiquín de Emergencia Emocional",
+      from: 'Maria Fernanda <noreply@todoesunbalance.com>',
+      to: [process.env.NOTIFICATION_EMAIL || 'todoesunbalance@gmail.com'],
+      subject: 'Resumen Semanal: Botiquín de Emergencia Emocional',
       html: emailHtml,
     });
 
-    return NextResponse.json({ message: "Resumen enviado", count: rows.length });
+    return NextResponse.json({
+      message: 'Resumen enviado',
+      count: rows.length,
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Error in cron job:", message);
-    return NextResponse.json({ error: "Error al procesar el cron job", detail: message }, { status: 500 });
+    console.error('Error in cron job:', message);
+    return NextResponse.json(
+      { error: 'Error al procesar el cron job', detail: message },
+      { status: 500 },
+    );
   }
 }
