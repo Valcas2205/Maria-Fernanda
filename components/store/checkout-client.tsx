@@ -25,23 +25,93 @@ import {
 
 type StepKey = 'contact' | 'shipping' | 'payment-method' | 'confirm';
 
-const PAYMENT_METHOD_DETAILS: Record<
-  'pago_movil' | 'zelle' | 'paypal',
-  { title: string; lines: string[] }
-> = {
-  pago_movil: {
-    title: 'Pago Móvil',
-    lines: ['Banco Plaza', 'V-26.540.635', '0424-5414804'],
-  },
-  zelle: {
-    title: 'Zelle',
-    lines: ['mafeazcunes@gmail.com', 'Maria Azcunes'],
-  },
-  paypal: {
-    title: 'PayPal',
-    lines: ['mafeazcunes@gmail.com', 'Maria Azcunes'],
-  },
+type PaymentMethodKey = 'pago_movil' | 'zelle' | 'paypal';
+
+const PAYMENT_METHOD_TITLES: Record<PaymentMethodKey, string> = {
+  pago_movil: 'Pago Móvil',
+  zelle: 'Zelle',
+  paypal: 'PayPal',
 };
+
+// Cuenta receptora de Pago Móvil. Los valores "copiables" van sin puntos,
+// guiones ni símbolos porque así los exigen los formularios/SMS de los
+// bancos venezolanos (código de banco de 4 dígitos, cédula y teléfono en
+// puros dígitos).
+const PAGO_MOVIL_BANK_CODE = '0138'; // Banco Plaza
+const PAGO_MOVIL_BANK_NAME = 'Banco Plaza';
+const PAGO_MOVIL_ID = '26540635'; // V-26.540.635
+const PAGO_MOVIL_PHONE = '04245414804'; // 0424-5414804
+
+const ZELLE_PAYPAL_EMAIL = 'mafeazcunes@gmail.com';
+const ZELLE_PAYPAL_NAME = 'Maria Azcunes';
+
+type PaymentCopyLine = { id: string; display: string; copyValue: string };
+
+const formatMontoBsForCopy = (amountBs: number): string =>
+  // Bs con coma decimal y sin separador de miles, formato que aceptan los
+  // campos de monto de Pago Móvil (igual que el comando SMS "PAGAR ... 58,95")
+  amountBs.toFixed(2).replace('.', ',');
+
+const formatMontoUsdForCopy = (amountUsd: number): string => amountUsd.toFixed(2);
+
+function getPaymentLines(
+  paymentMethod: string,
+  total: number,
+  bcvRate: number | null,
+): PaymentCopyLine[] {
+  if (paymentMethod === 'pago_movil') {
+    const montoBs = bcvRate ? total * bcvRate : null;
+    return [
+      {
+        id: 'banco',
+        display: `${PAGO_MOVIL_BANK_NAME} (${PAGO_MOVIL_BANK_CODE})`,
+        copyValue: PAGO_MOVIL_BANK_CODE,
+      },
+      {
+        id: 'telefono',
+        display: `${PAGO_MOVIL_PHONE.slice(0, 4)}-${PAGO_MOVIL_PHONE.slice(4)}`,
+        copyValue: PAGO_MOVIL_PHONE,
+      },
+      {
+        id: 'cedula',
+        display: `V-${PAGO_MOVIL_ID.slice(0, 2)}.${PAGO_MOVIL_ID.slice(2, 5)}.${PAGO_MOVIL_ID.slice(5)}`,
+        copyValue: PAGO_MOVIL_ID,
+      },
+      {
+        id: 'monto',
+        display: montoBs
+          ? `${montoBs.toLocaleString('es-VE', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })} Bs`
+          : `${total.toFixed(2)} USD`,
+        copyValue: montoBs ? formatMontoBsForCopy(montoBs) : formatMontoUsdForCopy(total),
+      },
+    ];
+  }
+
+  // zelle / paypal
+  return [
+    {
+      id: 'monto',
+      display: `${total.toFixed(2)} USD`,
+      copyValue: formatMontoUsdForCopy(total),
+    },
+    { id: 'email', display: ZELLE_PAYPAL_EMAIL, copyValue: ZELLE_PAYPAL_EMAIL },
+    { id: 'nombre', display: ZELLE_PAYPAL_NAME, copyValue: ZELLE_PAYPAL_NAME },
+  ];
+}
+
+function getCopyAllValue(paymentMethod: string, lines: PaymentCopyLine[]): string {
+  if (paymentMethod === 'pago_movil') {
+    const byId = Object.fromEntries(lines.map((l) => [l.id, l.copyValue]));
+    // Texto compatible con la opción "Pegar datos" de apps como BDVApp: detectan
+    // banco, teléfono, cédula y monto por patrón dentro del texto sin importar
+    // el orden, así que no llevan ninguna palabra clave ni separador especial.
+    return `${byId.banco} ${byId.telefono} ${byId.cedula} ${byId.monto}`;
+  }
+  return lines.map((l) => l.copyValue).join('\n');
+}
 
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -265,9 +335,9 @@ export function CheckoutClient() {
     setStepIndex((i) => Math.max(i - 1, 0));
   }
 
-  function copyPaymentDetails(text: string) {
+  function copyPaymentDetails(id: string, text: string) {
     navigator.clipboard.writeText(text).then(() => {
-      setCopiedMethod(text);
+      setCopiedMethod(id);
       setTimeout(() => setCopiedMethod(null), 2000);
     });
   }
@@ -366,6 +436,8 @@ export function CheckoutClient() {
       setLoading(false);
     }
   }
+
+  const paymentLines = getPaymentLines(form.paymentMethod, total, bcvRate);
 
   if (items.length === 0) {
     return (
@@ -699,9 +771,9 @@ export function CheckoutClient() {
                       Pago Móvil
                     </div>
                     <div className="text-xs lg:text-sm text-[#5c4b32] lg:leading-relaxed">
-                      <p>Banco Plaza</p>
-                      <p>V-26.540.635</p>
-                      <p>0424-5414804</p>
+                      <p>{PAGO_MOVIL_BANK_NAME} ({PAGO_MOVIL_BANK_CODE})</p>
+                      <p>V-{PAGO_MOVIL_ID.slice(0, 2)}.{PAGO_MOVIL_ID.slice(2, 5)}.{PAGO_MOVIL_ID.slice(5)}</p>
+                      <p>{PAGO_MOVIL_PHONE.slice(0, 4)}-{PAGO_MOVIL_PHONE.slice(4)}</p>
                     </div>
                   </label>
 
@@ -759,100 +831,53 @@ export function CheckoutClient() {
                 <div className={stepClass('confirm')}>
                   {/* Recap of selected payment method */}
                   <div className="mb-6 rounded-2xl bg-[#A7895C]/10 p-6 text-[#5c4b32]">
-                    <p className="font-serif text-2xl font-bold mb-6">
-                      {
-                        PAYMENT_METHOD_DETAILS[
-                          form.paymentMethod as keyof typeof PAYMENT_METHOD_DETAILS
-                        ]?.title
-                      }
-                    </p>
-                    <div className="space-y-4">
-                      {/* Monto a pagar */}
+                    <div className="mb-6 flex items-center justify-between gap-3">
+                      <p className="font-serif text-2xl font-bold">
+                        {PAYMENT_METHOD_TITLES[form.paymentMethod as PaymentMethodKey]}
+                      </p>
                       <button
                         type="button"
                         onClick={() =>
                           copyPaymentDetails(
-                            form.paymentMethod === 'pago_movil' &&
-                              bcvRate
-                              ? `${(total * bcvRate).toLocaleString('es-VE', {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })} Bs`
-                              : `${total.toFixed(2)} USD`,
+                            'all',
+                            getCopyAllValue(form.paymentMethod, paymentLines),
                           )
                         }
-                        className={`flex w-full items-center justify-between gap-3 rounded-lg p-4 text-left transition active:scale-95 ${
-                          copiedMethod ===
-                          (form.paymentMethod === 'pago_movil' &&
-                          bcvRate
-                            ? `${(total * bcvRate).toLocaleString('es-VE', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })} Bs`
-                            : `${total.toFixed(2)} USD`)
-                            ? 'bg-secondary/20'
-                            : 'bg-white/60 hover:bg-white/80'
+                        className={`flex flex-shrink-0 items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition active:scale-95 ${
+                          copiedMethod === 'all'
+                            ? 'bg-secondary text-white'
+                            : 'bg-secondary/15 text-secondary hover:bg-secondary/25'
                         }`}
                       >
-                        <p className="font-semibold text-base leading-relaxed text-[#5c4b32]">
-                          {form.paymentMethod === 'pago_movil' &&
-                          bcvRate
-                            ? `${(total * bcvRate).toLocaleString('es-VE', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })} Bs`
-                            : `${total.toFixed(2)} USD`}
-                        </p>
-                        <div className={`flex-shrink-0 rounded-lg p-2 transition ${
-                          copiedMethod ===
-                          (form.paymentMethod === 'pago_movil' &&
-                          bcvRate
-                            ? `${(total * bcvRate).toLocaleString('es-VE', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })} Bs`
-                            : `${total.toFixed(2)} USD`)
-                            ? 'bg-secondary/30 text-secondary'
-                            : 'bg-secondary/10 text-secondary'
-                        }`}>
-                          {copiedMethod ===
-                          (form.paymentMethod === 'pago_movil' &&
-                          bcvRate
-                            ? `${(total * bcvRate).toLocaleString('es-VE', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })} Bs`
-                            : `${total.toFixed(2)} USD`) ? (
-                            <Check size={20} />
-                          ) : (
-                            <Copy size={20} />
-                          )}
-                        </div>
+                        {copiedMethod === 'all' ? (
+                          <Check size={14} />
+                        ) : (
+                          <Copy size={14} />
+                        )}
+                        Copiar todos
                       </button>
-
-                      {/* Datos de la cuenta */}
-                      {PAYMENT_METHOD_DETAILS[
-                        form.paymentMethod as keyof typeof PAYMENT_METHOD_DETAILS
-                      ]?.lines.map((line, i) => (
+                    </div>
+                    <div className="space-y-4">
+                      {paymentLines.map((line) => (
                         <button
-                          key={i}
+                          key={line.id}
                           type="button"
-                          onClick={() => copyPaymentDetails(line)}
+                          onClick={() => copyPaymentDetails(line.id, line.copyValue)}
                           className={`flex w-full items-center justify-between gap-3 rounded-lg p-4 text-left transition active:scale-95 ${
-                            copiedMethod === line
+                            copiedMethod === line.id
                               ? 'bg-secondary/20'
                               : 'bg-white/60 hover:bg-white/80'
                           }`}
                         >
                           <p className="font-semibold text-base leading-relaxed text-[#5c4b32]">
-                            {line}
+                            {line.display}
                           </p>
                           <div className={`flex-shrink-0 rounded-lg p-2 transition ${
-                            copiedMethod === line
+                            copiedMethod === line.id
                               ? 'bg-secondary/30 text-secondary'
                               : 'bg-secondary/10 text-secondary'
                           }`}>
-                            {copiedMethod === line ? (
+                            {copiedMethod === line.id ? (
                               <Check size={20} />
                             ) : (
                               <Copy size={20} />

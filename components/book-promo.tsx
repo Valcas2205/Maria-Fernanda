@@ -16,7 +16,7 @@ const ebooks = [
     accent: '#8dbda2',
     href: '/tienda/guia-ansiedad',
     image: '/images/Portada-miAnsiedad.png',
-    price: '$0.03',
+    price: '$8.99',
   },
   {
     id: '3',
@@ -26,7 +26,7 @@ const ebooks = [
     accent: '#e8aea3',
     href: '/tienda/guia-asertividad',
     image: '/images/Portada-asertividad.png',
-    price: '$0.03',
+    price: '$8.99',
   },
 ];
 
@@ -121,7 +121,7 @@ export function BookPromo() {
                   </p>
                   <div className="mt-6 flex items-center justify-between">
                     <span className="font-serif text-3xl font-bold text-[#A7895C]">
-                      $0.08
+                      $25.99
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#A7895C] px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 group-hover:gap-3 group-hover:bg-[#A7895C]/90">
                       Ver fichas
