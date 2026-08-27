@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCart } from '@/lib/cart-context';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -223,6 +223,18 @@ export function CheckoutClient() {
   const [error, setError] = useState('');
   const [bcvRate, setBcvRate] = useState<number | null>(null);
   const [copiedMethod, setCopiedMethod] = useState<string | null>(null);
+  const [phoneDropdownOpen, setPhoneDropdownOpen] = useState(false);
+  const phoneDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (phoneDropdownRef.current && !phoneDropdownRef.current.contains(e.target as Node)) {
+        setPhoneDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     async function fetchBcv() {
@@ -261,12 +273,14 @@ export function CheckoutClient() {
     firstName: '',
     lastName: '',
     email: '',
+    phoneCode: '+58',
     phone: '',
     address: '',
     city: '',
     state: '',
     agency: '',
     deliveryType: 'barquisimeto', // "barquisimeto" | "nacional"
+    shippingRegion: 'nacional', // "nacional" | "internacional"
     country: 'Venezuela',
     paymentMethod: 'pago_movil',
     paymentReference: '',
@@ -289,10 +303,11 @@ export function CheckoutClient() {
     if (
       !form.firstName.trim() ||
       !form.lastName.trim() ||
-      !form.email.trim()
+      !form.email.trim() ||
+      !form.phone.trim()
     ) {
       setError(
-        'Por favor completa todos los campos: nombre, apellido y correo electrónico.',
+        'Por favor completa todos los campos: nombre, apellido, correo electrónico y teléfono.',
       );
       return false;
     }
@@ -302,6 +317,30 @@ export function CheckoutClient() {
       );
       return false;
     }
+
+    const phoneDigits = form.phone.replace(/\D/g, '');
+    let isValidPhone = false;
+    switch(form.phoneCode) {
+      case '+58':
+        isValidPhone = phoneDigits.length === 10 || phoneDigits.length === 11;
+        break;
+      case '+1':
+      case '+1-CA':
+      case '+57':
+        isValidPhone = phoneDigits.length === 10;
+        break;
+      case '+34':
+        isValidPhone = phoneDigits.length === 9;
+        break;
+      default:
+        isValidPhone = phoneDigits.length >= 7;
+    }
+
+    if (!isValidPhone) {
+      setError('Por favor ingresa un número de teléfono válido para el país seleccionado.');
+      return false;
+    }
+
     setError('');
     return true;
   }
@@ -376,8 +415,9 @@ export function CheckoutClient() {
       const location = [form.address, form.city, form.state, form.country]
         .filter(Boolean)
         .join(', ');
+      const rawPhone = form.phone.trim();
       const phone =
-        form.phone.trim().length >= 6 ? form.phone.trim() : '0000000';
+        rawPhone.length >= 6 ? `${form.phoneCode} ${rawPhone}` : '0000000';
 
       const { customerId } = await upsertCheckoutCustomerAction(token, {
         firstName: form.firstName.trim(),
@@ -447,7 +487,7 @@ export function CheckoutClient() {
         </h1>
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 rounded-full bg-secondary px-7 py-3.5 text-base font-bold text-white hover:opacity-90"
+          className="inline-flex items-center gap-2 rounded-xl bg-secondary px-7 py-3.5 text-base font-bold text-white hover:opacity-90"
         >
           Ir a la tienda
         </Link>
@@ -457,7 +497,7 @@ export function CheckoutClient() {
 
   return (
     <section className="px-6 py-10 md:py-16">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-3xl">
         <Link
           href="/tienda/carrito"
           className={`${
@@ -473,45 +513,37 @@ export function CheckoutClient() {
         </h1>
 
         {/* Step indicator */}
-        <div className="mb-8 flex items-center gap-1 overflow-x-auto">
+        <div className="mb-10 flex w-full items-center justify-between overflow-x-auto pb-6">
           {steps.map((step, i) => {
             const isCompleted = i < safeStepIndex;
             const isCurrent = i === safeStepIndex;
             return (
-              <div key={step.key} className="flex flex-shrink-0 items-center gap-1">
-                <div
-                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-all ${
-                    isCompleted || isCurrent
-                      ? 'bg-secondary text-white'
-                      : 'border-2 border-border text-[#5c4b32]/50'
-                  } ${isCurrent ? 'ring-3 ring-secondary/30' : ''}`}
-                >
-                  {isCompleted ? (
-                    <span className="text-[8px]">✓</span>
-                  ) : (
-                    <span>{i + 1}</span>
-                  )}
-                </div>
-                <span
-                  className={`text-[10px] font-semibold whitespace-nowrap ${
-                    isCompleted || isCurrent
-                      ? 'text-secondary'
-                      : 'text-[#5c4b32]/50'
-                  }`}
-                >
-                  {step.label}
-                </span>
-                {i < steps.length - 1 && (
-                  <div
-                    className={`ml-1 h-0.5 w-4 flex-shrink-0 transition-colors ${
-                      isCompleted ? 'bg-secondary' : 'bg-border'
+              <div key={step.key} className="flex flex-1 items-center justify-center gap-2 md:gap-4 relative px-2">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span
+                    className={`font-serif text-2xl md:text-4xl font-bold transition-colors ${
+                      isCompleted || isCurrent ? 'text-secondary' : 'text-[#5c4b32]/30'
                     }`}
-                  />
+                  >
+                    {i + 1}
+                  </span>
+                  <span
+                    className={`text-[10px] md:text-sm font-bold uppercase tracking-wider transition-colors ${
+                      isCompleted || isCurrent ? 'text-[#1a1a1a]' : 'text-[#5c4b32]/40'
+                    }`}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="hidden md:block absolute right-0 top-1/2 h-8 w-px -translate-y-1/2 bg-border" />
                 )}
               </div>
             );
           })}
         </div>
+
+        {/* Shipping region toggle removed from here */}
 
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-8">
@@ -523,14 +555,14 @@ export function CheckoutClient() {
               className="flex flex-col gap-6"
             >
               {/* Contact info */}
-              <div className={`${stepClass('contact')} rounded-3xl bg-card p-6 shadow-sm`}>
+              <div className={`${stepClass('contact')} rounded-2xl bg-card p-6 shadow-sm`}>
                 <h2 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-5">
                   Información de contacto
                 </h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="flex flex-col gap-1.5">
                     <label
-                      className="text-sm font-semibold text-[#5c4b32]"
+                      className="text-base font-semibold text-[#5c4b32]"
                       htmlFor="firstName"
                     >
                       Nombre *
@@ -548,7 +580,7 @@ export function CheckoutClient() {
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label
-                      className="text-sm font-semibold text-[#5c4b32]"
+                      className="text-base font-semibold text-[#5c4b32]"
                       htmlFor="lastName"
                     >
                       Apellido *
@@ -566,7 +598,7 @@ export function CheckoutClient() {
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label
-                      className="text-sm font-semibold text-[#5c4b32]"
+                      className="text-base font-semibold text-[#5c4b32]"
                       htmlFor="email"
                     >
                       Correo electrónico *
@@ -584,159 +616,253 @@ export function CheckoutClient() {
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label
-                      className="text-sm font-semibold text-[#5c4b32]"
+                      className="text-base font-semibold text-[#5c4b32]"
                       htmlFor="phone"
                     >
                       Teléfono (WhatsApp)
                     </label>
-                    <Input
-                      size="lg"
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={form.phone}
-                      onChange={(e) => handlePhoneChange(e, setForm)}
-                      placeholder="+58 414-0000000"
-                    />
+                    {/* Custom flag phone dropdown */}
+                    {(() => {
+                      const intlOptions = [
+                        { code: '+1',    img: 'https://flagcdn.com/w40/us.png', label: 'USA +1',  placeholder: '202-555-0123' },
+                        { code: '+34',   img: 'https://flagcdn.com/w40/es.png', label: 'ESP +34', placeholder: '612-345-678' },
+                        { code: '+1-CA', img: 'https://flagcdn.com/w40/ca.png', label: 'CAN +1',  placeholder: '416-555-0123' },
+                        { code: '+57',   img: 'https://flagcdn.com/w40/co.png', label: 'COL +57', placeholder: '310-555-0123' },
+                        { code: '+58',   img: 'https://flagcdn.com/w40/ve.png', label: 'VEN +58', placeholder: '414-0000000' },
+                      ];
+                      const options = intlOptions;
+                      const selected = options.find(o => o.code === form.phoneCode) ?? options[0];
+                      return (
+                        <div className="flex rounded-xl border border-border bg-background transition focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20" style={{overflow: 'visible'}}>
+                          {/* Trigger */}
+                          <div className="relative" ref={phoneDropdownRef} style={{flexShrink: 0}}>
+                            <button
+                              type="button"
+                              onClick={() => setPhoneDropdownOpen(v => !v)}
+                              className="flex items-center gap-1.5 pl-3 pr-2 py-3 border-r border-border text-sm font-semibold text-[#1a1a1a] hover:bg-[#5c4b32]/5 transition select-none whitespace-nowrap h-full rounded-l-xl"
+                            >
+                              <img src={selected.img} alt="" className="w-5 h-4 object-cover rounded-sm" style={{display:'inline-block'}} />
+                              <span className="text-xs text-[#5c4b32]/80">{selected.code.replace('-CA','')}</span>
+                              <svg className={`w-3 h-3 text-[#5c4b32]/50 transition-transform ${phoneDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                            {/* Dropdown list */}
+                            {phoneDropdownOpen && (
+                              <div className="absolute left-0 top-full mt-1 w-48 rounded-xl border border-border bg-white shadow-2xl" style={{zIndex: 9999}}>
+                                {options.map(opt => (
+                                  <button
+                                    key={opt.code}
+                                    type="button"
+                                    onClick={() => {
+                                      setForm(prev => ({ ...prev, phoneCode: opt.code, phone: '' }));
+                                      setPhoneDropdownOpen(false);
+                                    }}
+                                    className={`flex w-full items-center gap-3 px-4 py-3 text-sm transition hover:bg-[#A7895C]/10 ${
+                                      form.phoneCode === opt.code ? 'bg-secondary/10 font-bold text-secondary' : 'text-[#1a1a1a]'
+                                    }`}
+                                  >
+                                    <img src={opt.img} alt="" className="w-6 h-4 object-cover rounded-sm flex-shrink-0" />
+                                    <span>{opt.label}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          {/* Phone input */}
+                          <input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            value={form.phone}
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/[^\d\s-]/g, '');
+                              const digitCount = val.replace(/\D/g, '').length;
+                              let maxDigits = 10;
+                              if (selected.code === '+58') maxDigits = 11;
+                              if (selected.code === '+34') maxDigits = 9;
+
+                              if (digitCount <= maxDigits) {
+                                setForm((prev) => ({ ...prev, phone: val }));
+                              }
+                            }}
+                            placeholder={selected.placeholder}
+                            className="flex-1 min-w-0 bg-transparent px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none"
+                          />
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
 
               {/* Shipping — only if physical product */}
               {hasPhysical && (
-                <div className={`${stepClass('shipping')} rounded-3xl bg-card p-6 shadow-sm`}>
+                <div className={`${stepClass('shipping')} rounded-2xl bg-card p-6 shadow-sm`}>
                   <h2 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-5">
                     Información de Envío
                   </h2>
 
-                  <div className="mb-6 flex gap-4">
-                    <label
-                      className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
-                        form.deliveryType === 'barquisimeto'
-                          ? 'border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]'
-                          : 'border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="deliveryType"
-                        value="barquisimeto"
-                        checked={form.deliveryType === 'barquisimeto'}
-                        onChange={handleChange}
-                        className="sr-only"
-                      />
-                      <span className="text-sm font-bold">
-                        Delivery en Barquisimeto
-                      </span>
-                    </label>
-                    <label
-                      className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
-                        form.deliveryType === 'nacional'
-                          ? 'border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]'
-                          : 'border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="deliveryType"
-                        value="nacional"
-                        checked={form.deliveryType === 'nacional'}
-                        onChange={handleChange}
-                        className="sr-only"
-                      />
-                      <span className="text-sm font-bold">
-                        Envío Nacional (MRW/Zoom)
-                      </span>
-                    </label>
+                  {/* Shipping region toggle */}
+                  <div className="mb-8 flex items-center justify-center">
+                    <div className="inline-flex rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+                      <button
+                        type="button"
+                        onClick={() => setForm((prev) => ({ 
+                          ...prev, 
+                          shippingRegion: 'nacional', 
+                          country: 'Venezuela'
+                        }))}
+                        className={`flex items-center gap-2 px-6 py-3 text-sm font-bold transition-all ${
+                          form.shippingRegion === 'nacional'
+                            ? 'bg-secondary text-white'
+                            : 'text-[#5c4b32]/60 hover:text-[#5c4b32]'
+                        }`}
+                      >
+                        Envío Nacional
+                      </button>
+                      <div className="w-px bg-border" />
+                      <button
+                        type="button"
+                        onClick={() => setForm((prev) => ({ 
+                          ...prev, 
+                          shippingRegion: 'internacional', 
+                          country: 'Estados Unidos',
+                          paymentMethod: prev.paymentMethod === 'pago_movil' ? 'zelle' : prev.paymentMethod
+                        }))}
+                        className={`flex items-center gap-2 px-6 py-3 text-sm font-bold transition-all ${
+                          form.shippingRegion === 'internacional'
+                            ? 'bg-secondary text-white'
+                            : 'text-[#5c4b32]/60 hover:text-[#5c4b32]'
+                        }`}
+                      >
+                        🌎 Envío Internacional
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {form.deliveryType === 'barquisimeto' ? (
-                      <div className="flex flex-col gap-1.5 sm:col-span-2">
+                  {form.shippingRegion === 'nacional' ? (
+                    /* ── NACIONAL ── */
+                    <>
+                      <div className="mb-6 flex gap-4">
                         <label
-                          className="text-sm font-semibold text-[#5c4b32]"
-                          htmlFor="address"
+                          className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
+                            form.deliveryType === 'barquisimeto'
+                              ? 'border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]'
+                              : 'border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40'
+                          }`}
                         >
-                          Dirección exacta para el delivery *
+                          <input
+                            type="radio"
+                            name="deliveryType"
+                            value="barquisimeto"
+                            checked={form.deliveryType === 'barquisimeto'}
+                            onChange={handleChange}
+                            className="sr-only"
+                          />
+                          <span className="text-sm font-bold">Delivery en Barquisimeto</span>
                         </label>
-                        <Input
-                          size="lg"
-                          id="address"
-                          name="address"
-                          type="text"
-                          required={hasPhysical}
-                          value={form.address}
-                          onChange={handleChange}
-                          placeholder="Ej: Urb. del Este, Calle 2, Edificio Los Robles, Apto 4"
-                        />
+                        <label
+                          className={`flex-1 cursor-pointer rounded-xl border-2 p-3 text-center transition-all ${
+                            form.deliveryType === 'nacional'
+                              ? 'border-[#A7895C] bg-[#A7895C]/10 text-[#A7895C]'
+                              : 'border-border text-[#5c4b32]/70 hover:border-[#A7895C]/40'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="deliveryType"
+                            value="nacional"
+                            checked={form.deliveryType === 'nacional'}
+                            onChange={handleChange}
+                            className="sr-only"
+                          />
+                          <span className="text-sm font-bold">Envío Nacional (MRW/Zoom)</span>
+                        </label>
                       </div>
-                    ) : (
-                      <>
-                        <div className="flex flex-col gap-1.5">
-                          <label
-                            className="text-sm font-semibold text-[#5c4b32]"
-                            htmlFor="state"
-                          >
-                            Estado *
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {form.deliveryType === 'barquisimeto' ? (
+                          <div className="flex flex-col gap-1.5 sm:col-span-2">
+                            <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="address">
+                              Dirección exacta para el delivery *
+                            </label>
+                            <Input
+                              size="lg"
+                              id="address"
+                              name="address"
+                              type="text"
+                              required={hasPhysical}
+                              value={form.address}
+                              onChange={handleChange}
+                              placeholder="Ej: Urb. del Este, Calle 2, Edificio Los Robles, Apto 4"
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="state">Estado *</label>
+                              <Input size="lg" id="state" name="state" type="text" required={hasPhysical} value={form.state} onChange={handleChange} placeholder="Ej: Carabobo" />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="city">Ciudad *</label>
+                              <Input size="lg" id="city" name="city" type="text" required={hasPhysical} value={form.city} onChange={handleChange} placeholder="Ej: Valencia" />
+                            </div>
+                            <div className="flex flex-col gap-1.5 sm:col-span-2">
+                              <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="agency">Nombre/Código de Agencia MRW o Zoom *</label>
+                              <Input size="lg" id="agency" name="agency" type="text" required={hasPhysical} value={form.agency} onChange={handleChange} placeholder="Ej: MRW Agencia Centro o Zoom Av. Bolívar" />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <p className="mt-5 flex items-center gap-2 rounded-xl bg-[#A7895C]/10 px-4 py-3 text-xs text-[#5c4b32]">
+                        <span>📦</span>
+                        {form.deliveryType === 'barquisimeto'
+                          ? 'El costo del delivery se coordinará contigo por WhatsApp después de la compra.'
+                          : 'Los envíos nacionales se realizan con Cobro en Destino (COD) por la agencia indicada.'}
+                      </p>
+                    </>
+                  ) : (
+                    /* ── INTERNACIONAL ── */
+                    <>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="flex flex-col gap-1.5 sm:col-span-2">
+                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="address">
+                            Dirección completa *
                           </label>
                           <Input
                             size="lg"
-                            id="state"
-                            name="state"
+                            id="address"
+                            name="address"
                             type="text"
                             required={hasPhysical}
-                            value={form.state}
+                            value={form.address}
                             onChange={handleChange}
-                            placeholder="Ej: Carabobo"
+                            placeholder="Ej: 123 Main St, Apt 4B"
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label
-                            className="text-sm font-semibold text-[#5c4b32]"
-                            htmlFor="city"
-                          >
-                            Ciudad *
-                          </label>
-                          <Input
-                            size="lg"
-                            id="city"
-                            name="city"
-                            type="text"
-                            required={hasPhysical}
-                            value={form.city}
-                            onChange={handleChange}
-                            placeholder="Ej: Valencia"
-                          />
+                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="city">Ciudad *</label>
+                          <Input size="lg" id="city" name="city" type="text" required={hasPhysical} value={form.city} onChange={handleChange} placeholder="Ej: Miami" />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="state">Estado / Provincia *</label>
+                          <Input size="lg" id="state" name="state" type="text" required={hasPhysical} value={form.state} onChange={handleChange} placeholder="Ej: Florida" />
                         </div>
                         <div className="flex flex-col gap-1.5 sm:col-span-2">
-                          <label
-                            className="text-sm font-semibold text-[#5c4b32]"
-                            htmlFor="agency"
-                          >
-                            Nombre/Código de Agencia MRW o Zoom *
+                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="agency">
+                            Agencia de envío preferida
                           </label>
-                          <Input
-                            size="lg"
-                            id="agency"
-                            name="agency"
-                            type="text"
-                            required={hasPhysical}
-                            value={form.agency}
-                            onChange={handleChange}
-                            placeholder="Ej: MRW Agencia Centro o Zoom Av. Bolívar"
-                          />
+                          <Input size="lg" id="agency" name="agency" type="text" value={form.agency} onChange={handleChange} placeholder="Ej: FedEx, DHL, UPS..." />
                         </div>
-                      </>
-                    )}
-                  </div>
-                  <p className="mt-5 flex items-center gap-2 rounded-xl bg-[#A7895C]/10 px-4 py-3 text-xs text-[#5c4b32]">
-                    <span>📦</span>
-                    {form.deliveryType === 'barquisimeto'
-                      ? 'El costo del delivery se coordinará contigo por WhatsApp después de la compra.'
-                      : 'Los envíos nacionales se realizan con Cobro en Destino (COD) por la agencia indicada.'}
-                  </p>
+                      </div>
+                      <p className="mt-5 flex items-center gap-2 rounded-xl bg-[#A7895C]/10 px-4 py-3 text-xs text-[#5c4b32]">
+                        <span>✈️</span>
+                        Los envíos internacionales se coordinan por WhatsApp. Te contactaremos para confirmar el costo y la agencia de envío.
+                      </p>
+                    </>
+                  )}
                 </div>
               )}
+
 
               {/* Payment method */}
               <div
@@ -745,37 +871,39 @@ export function CheckoutClient() {
                   currentStepKey === 'confirm'
                     ? 'block'
                     : 'hidden'
-                } rounded-3xl bg-card p-6 shadow-sm`}
+                } rounded-2xl bg-card p-6 shadow-sm`}
               >
                 <h2 className="font-serif text-2xl font-bold text-[#1a1a1a] mb-5">
                   Métodos de Pago
                 </h2>
-                <div className={`${currentStepKey === 'payment-method' ? 'grid' : 'hidden'} gap-4 sm:grid-cols-3 mb-6`}>
+                <div className={`${currentStepKey === 'payment-method' ? 'grid' : 'hidden'} gap-4 ${form.shippingRegion === 'internacional' ? 'sm:grid-cols-2 max-w-2xl mx-auto' : 'sm:grid-cols-3'} mb-6`}>
                   {/* Pago Movil */}
-                  <label
-                    className={`cursor-pointer rounded-2xl border-2 p-4 lg:p-6 transition-all ${
-                      form.paymentMethod === 'pago_movil'
-                        ? 'border-secondary bg-secondary/5'
-                        : 'border-border hover:border-secondary/40'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="pago_movil"
-                      checked={form.paymentMethod === 'pago_movil'}
-                      onChange={handleChange}
-                      className="sr-only"
-                    />
-                    <div className="font-bold text-[#1a1a1a] mb-2 lg:mb-3 text-sm lg:text-base">
-                      Pago Móvil
-                    </div>
-                    <div className="text-xs lg:text-sm text-[#5c4b32] lg:leading-relaxed">
-                      <p>{PAGO_MOVIL_BANK_NAME} ({PAGO_MOVIL_BANK_CODE})</p>
-                      <p>V-{PAGO_MOVIL_ID.slice(0, 2)}.{PAGO_MOVIL_ID.slice(2, 5)}.{PAGO_MOVIL_ID.slice(5)}</p>
-                      <p>{PAGO_MOVIL_PHONE.slice(0, 4)}-{PAGO_MOVIL_PHONE.slice(4)}</p>
-                    </div>
-                  </label>
+                  {form.shippingRegion !== 'internacional' && (
+                    <label
+                      className={`cursor-pointer rounded-2xl border-2 p-4 lg:p-6 transition-all ${
+                        form.paymentMethod === 'pago_movil'
+                          ? 'border-secondary bg-secondary/5'
+                          : 'border-border hover:border-secondary/40'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="pago_movil"
+                        checked={form.paymentMethod === 'pago_movil'}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <div className="font-bold text-[#1a1a1a] mb-2 lg:mb-3 text-sm lg:text-base">
+                        Pago Móvil
+                      </div>
+                      <div className="text-xs lg:text-sm text-[#5c4b32] lg:leading-relaxed">
+                        <p>{PAGO_MOVIL_BANK_NAME} ({PAGO_MOVIL_BANK_CODE})</p>
+                        <p>V-{PAGO_MOVIL_ID.slice(0, 2)}.{PAGO_MOVIL_ID.slice(2, 5)}.{PAGO_MOVIL_ID.slice(5)}</p>
+                        <p>{PAGO_MOVIL_PHONE.slice(0, 4)}-{PAGO_MOVIL_PHONE.slice(4)}</p>
+                      </div>
+                    </label>
+                  )}
 
                   {/* Zelle */}
                   <label
@@ -888,71 +1016,73 @@ export function CheckoutClient() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label
-                      className="text-sm font-semibold text-[#5c4b32]"
-                      htmlFor="paymentReference"
-                    >
-                    Número de referencia o recibo *
-                  </label>
-                  <Input
-                    size="lg"
-                    id="paymentReference"
-                    name="paymentReference"
-                    type="text"
-                    required
-                    value={form.paymentReference}
-                    onChange={handleChange}
-                    placeholder="Ej: 12345678"
-                  />
-                  <p className="text-xs text-[#5c4b32]/60 mt-1">
-                    Realiza el pago al método seleccionado y coloca el número de
-                    referencia aquí.
-                  </p>
-                </div>
-
-                {form.paymentMethod !== 'zelle' && form.paymentMethod !== 'paypal' && (
-                  <div className="flex flex-col gap-1.5 mt-4">
-                    <label
-                      className="text-sm font-semibold text-[#5c4b32]"
-                      htmlFor="senderId"
-                    >
-                      Cédula de Identidad (Titular de la cuenta) *
-                    </label>
-                    <div className="flex rounded-xl border border-border bg-background transition focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20 overflow-hidden">
-                      <select
-                        name="docType"
-                        value={form.docType}
-                        onChange={handleChange}
-                        className="bg-transparent pl-4 pr-2 py-3 text-sm text-[#1a1a1a] outline-none border-r border-border"
+                  <div className="max-w-2xl mx-auto w-full space-y-5">
+                    <div className="flex flex-col gap-1.5">
+                      <label
+                        className="text-sm font-semibold text-[#5c4b32]"
+                        htmlFor="paymentReference"
                       >
-                        <option value="V">V</option>
-                        <option value="E">E</option>
-                        <option value="J">J</option>
-                        <option value="G">G</option>
-                        <option value="P">P</option>
-                        <option value="C">C</option>
-                      </select>
-                      <input
-                        id="docNumber"
-                        name="docNumber"
-                        type="text"
-                        required
-                        value={form.docNumber}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/\D/g, "");
-                          setForm((prev) => ({ ...prev, docNumber: val }));
-                        }}
-                        placeholder="12345678"
-                        className="flex-1 bg-transparent px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none"
-                      />
-                    </div>
+                      Número de referencia o recibo *
+                    </label>
+                    <Input
+                      size="lg"
+                      id="paymentReference"
+                      name="paymentReference"
+                      type="text"
+                      required
+                      value={form.paymentReference}
+                      onChange={handleChange}
+                      placeholder="Ej: 12345678"
+                    />
                     <p className="text-xs text-[#5c4b32]/60 mt-1">
-                      Necesitamos tu cédula para que nuestro sistema valide el
-                      pago automáticamente.
+                      Realiza el pago al método seleccionado y coloca el número de
+                      referencia aquí.
                     </p>
                   </div>
-                )}
+
+                  {form.paymentMethod !== 'zelle' && form.paymentMethod !== 'paypal' && (
+                    <div className="flex flex-col gap-1.5">
+                      <label
+                        className="text-sm font-semibold text-[#5c4b32]"
+                        htmlFor="senderId"
+                      >
+                        Cédula de Identidad (Titular de la cuenta) *
+                      </label>
+                      <div className="flex rounded-xl border border-border bg-background transition focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20 overflow-hidden">
+                        <select
+                          name="docType"
+                          value={form.docType}
+                          onChange={handleChange}
+                          className="bg-transparent pl-4 pr-2 py-3 text-sm text-[#1a1a1a] outline-none border-r border-border"
+                        >
+                          <option value="V">V</option>
+                          <option value="E">E</option>
+                          <option value="J">J</option>
+                          <option value="G">G</option>
+                          <option value="P">P</option>
+                          <option value="C">C</option>
+                        </select>
+                        <input
+                          id="docNumber"
+                          name="docNumber"
+                          type="text"
+                          required
+                          value={form.docNumber}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, "");
+                            setForm((prev) => ({ ...prev, docNumber: val }));
+                          }}
+                          placeholder="12345678"
+                          className="flex-1 bg-transparent px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#5c4b32]/40 outline-none"
+                        />
+                      </div>
+                      <p className="text-xs text-[#5c4b32]/60 mt-1">
+                        Necesitamos tu cédula para que nuestro sistema valide el
+                        pago automáticamente.
+                      </p>
+                    </div>
+                  )}
+                </div>
                 </div>
               </div>
 
@@ -968,7 +1098,7 @@ export function CheckoutClient() {
                   <button
                     type="button"
                     onClick={goBack}
-                    className="flex-1 rounded-full border-2 border-border py-3 text-sm font-bold text-[#5c4b32] transition hover:border-[#A7895C]/40"
+                    className="flex-1 rounded-xl border-2 border-border py-3 text-sm font-bold text-[#5c4b32] transition hover:border-[#A7895C]/40"
                   >
                     Volver
                   </button>
@@ -977,7 +1107,7 @@ export function CheckoutClient() {
                   <button
                     type="button"
                     onClick={goNext}
-                    className="flex-1 rounded-full bg-secondary py-3 text-sm font-bold text-white transition hover:opacity-90"
+                    className="flex-1 rounded-xl bg-secondary py-4 text-base font-bold text-white transition hover:opacity-90"
                   >
                     Siguiente
                   </button>
@@ -987,7 +1117,7 @@ export function CheckoutClient() {
 
             {/* Order summary */}
             <div className={stepClass('confirm')}>
-              <div className="rounded-3xl bg-card p-6 shadow-sm">
+              <div className="rounded-2xl bg-card p-6 shadow-sm">
                 <h2 className="font-serif text-xl font-bold text-[#1a1a1a] mb-5">
                   Tu pedido
                 </h2>
@@ -1021,7 +1151,7 @@ export function CheckoutClient() {
                             </p>
                           )}
                         </div>
-                        <span className="text-sm font-bold text-[#A7895C] shrink-0">
+                        <span className="text-base lg:text-lg font-bold text-[#A7895C] shrink-0">
                           ${(item.product.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
@@ -1034,19 +1164,19 @@ export function CheckoutClient() {
                     <span className="font-semibold text-[#5c4b32]">Total</span>
                     <div className="flex flex-col items-end">
                       <div className="flex items-baseline gap-1">
-                        <span className="font-serif text-3xl font-bold text-[#A7895C]">
+                        <span className="font-serif text-3xl lg:text-4xl font-bold text-[#A7895C]">
                           ${total.toFixed(2)}
                         </span>
-                        <span className="text-xs text-[#5c4b32]/50">USD</span>
+                        <span className="text-xs lg:text-sm text-[#5c4b32]/50">USD</span>
                       </div>
                       {form.paymentMethod === 'pago_movil' && bcvRate && (
-                        <div className="text-sm font-semibold text-secondary mt-1 animate-in fade-in zoom-in-95 duration-300">
+                        <div className="text-base lg:text-lg font-semibold text-secondary mt-1 animate-in fade-in zoom-in-95 duration-300">
                           {(total * bcvRate).toLocaleString('es-VE', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}{' '}
                           Bs
-                          <span className="text-[10px] text-[#5c4b32]/50 ml-1 font-normal">
+                          <span className="text-xs text-[#5c4b32]/50 ml-1 font-normal">
                             (Tasa BCV)
                           </span>
                         </div>
@@ -1058,7 +1188,7 @@ export function CheckoutClient() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-secondary py-4 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary py-4 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
                   {loading ? (
                     <>

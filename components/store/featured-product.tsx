@@ -55,10 +55,6 @@ export function FeaturedProduct({ product }: Props) {
                   <Truck size={12} />
                   Envíos a toda Venezuela.
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
-                  <Truck size={12} />
-                  Disponible en Amazon
-                </span>
               </div>
               <div>
                 <h2 className="font-serif text-[32px] leading-[1.15] font-bold text-[#1a1a1a]">
@@ -120,10 +116,6 @@ export function FeaturedProduct({ product }: Props) {
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
                     <Truck size={12} />
                     Envíos a toda Venezuela.
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
-                    <Truck size={12} />
-                    Disponible en Amazon
                   </span>
                 </div>
 
