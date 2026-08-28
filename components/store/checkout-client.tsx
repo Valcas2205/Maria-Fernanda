@@ -279,6 +279,7 @@ export function CheckoutClient() {
     city: '',
     state: '',
     agency: '',
+    zipCode: '',
     deliveryType: 'barquisimeto', // "barquisimeto" | "nacional"
     shippingRegion: 'nacional', // "nacional" | "internacional"
     country: 'Venezuela',
@@ -346,18 +347,31 @@ export function CheckoutClient() {
   }
 
   function validateShippingStep(): boolean {
-    if (form.deliveryType === 'barquisimeto') {
-      if (!form.address.trim()) {
-        setError('Por favor ingresa tu dirección exacta para que podamos entregarte el pedido.');
+    if (form.shippingRegion === 'nacional') {
+      if (form.deliveryType === 'barquisimeto') {
+        if (!form.address.trim()) {
+          setError('Por favor ingresa tu dirección exacta para que podamos entregarte el pedido.');
+          return false;
+        }
+      } else if (
+        !form.state.trim() ||
+        !form.city.trim() ||
+        !form.agency.trim()
+      ) {
+        setError('Por favor completa el estado, ciudad y la agencia MRW o Zoom.');
         return false;
       }
-    } else if (
-      !form.state.trim() ||
-      !form.city.trim() ||
-      !form.agency.trim()
-    ) {
-      setError('Por favor completa el estado, ciudad y la agencia MRW o Zoom.');
-      return false;
+    } else {
+      // Internacional
+      if (
+        !form.address.trim() ||
+        !form.city.trim() ||
+        !form.state.trim() ||
+        !form.zipCode.trim()
+      ) {
+        setError('Por favor completa todos los campos de la dirección internacional (incluyendo Código Postal).');
+        return false;
+      }
     }
     setError('');
     return true;
@@ -625,10 +639,7 @@ export function CheckoutClient() {
                     {(() => {
                       const intlOptions = [
                         { code: '+1',    img: 'https://flagcdn.com/w40/us.png', label: 'USA +1',  placeholder: '202-555-0123' },
-                        { code: '+34',   img: 'https://flagcdn.com/w40/es.png', label: 'ESP +34', placeholder: '612-345-678' },
-                        { code: '+1-CA', img: 'https://flagcdn.com/w40/ca.png', label: 'CAN +1',  placeholder: '416-555-0123' },
-                        { code: '+57',   img: 'https://flagcdn.com/w40/co.png', label: 'COL +57', placeholder: '310-555-0123' },
-                        { code: '+58',   img: 'https://flagcdn.com/w40/ve.png', label: 'VEN +58', placeholder: '414-0000000' },
+                        { code: '+58',   img: 'https://flagcdn.com/w40/ve.png', label: 'VEN +58', placeholder: '414-000-0000' },
                       ];
                       const options = intlOptions;
                       const selected = options.find(o => o.code === form.phoneCode) ?? options[0];
@@ -674,14 +685,20 @@ export function CheckoutClient() {
                             type="tel"
                             value={form.phone}
                             onChange={(e) => {
-                              const val = e.target.value.replace(/[^\d\s-]/g, '');
-                              const digitCount = val.replace(/\D/g, '').length;
+                              const digits = e.target.value.replace(/\D/g, '');
                               let maxDigits = 10;
                               if (selected.code === '+58') maxDigits = 11;
-                              if (selected.code === '+34') maxDigits = 9;
-
-                              if (digitCount <= maxDigits) {
-                                setForm((prev) => ({ ...prev, phone: val }));
+                              
+                              if (digits.length <= maxDigits) {
+                                let formatted = digits;
+                                if (selected.code === '+58' && digits.startsWith('0')) {
+                                  if (digits.length > 7) formatted = `${digits.slice(0,4)}-${digits.slice(4,7)}-${digits.slice(7)}`;
+                                  else if (digits.length > 4) formatted = `${digits.slice(0,4)}-${digits.slice(4)}`;
+                                } else {
+                                  if (digits.length > 6) formatted = `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6)}`;
+                                  else if (digits.length > 3) formatted = `${digits.slice(0,3)}-${digits.slice(3)}`;
+                                }
+                                setForm((prev) => ({ ...prev, phone: formatted }));
                               }
                             }}
                             placeholder={selected.placeholder}
@@ -734,7 +751,7 @@ export function CheckoutClient() {
                             : 'text-[#5c4b32]/60 hover:text-[#5c4b32]'
                         }`}
                       >
-                        🌎 Envío Internacional
+                        Envío a EE. UU.
                       </button>
                     </div>
                   </div>
@@ -847,16 +864,20 @@ export function CheckoutClient() {
                           <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="state">Estado / Provincia *</label>
                           <Input size="lg" id="state" name="state" type="text" required={hasPhysical} value={form.state} onChange={handleChange} placeholder="Ej: Florida" />
                         </div>
-                        <div className="flex flex-col gap-1.5 sm:col-span-2">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="zipCode">Código Postal *</label>
+                          <Input size="lg" id="zipCode" name="zipCode" type="text" required={hasPhysical} value={form.zipCode} onChange={handleChange} placeholder="Ej: 33101" />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
                           <label className="text-sm font-semibold text-[#5c4b32]" htmlFor="agency">
-                            Agencia de envío preferida
+                            Agencia de envío
                           </label>
                           <Input size="lg" id="agency" name="agency" type="text" value={form.agency} onChange={handleChange} placeholder="Ej: FedEx, DHL, UPS..." />
                         </div>
                       </div>
                       <p className="mt-5 flex items-center gap-2 rounded-xl bg-[#A7895C]/10 px-4 py-3 text-xs text-[#5c4b32]">
                         <span>✈️</span>
-                        Los envíos internacionales se coordinan por WhatsApp. Te contactaremos para confirmar el costo y la agencia de envío.
+                        Los envíos a Estados Unidos se coordinan por WhatsApp. Te contactaremos para confirmar el costo y la agencia de envío.
                       </p>
                     </>
                   )}
