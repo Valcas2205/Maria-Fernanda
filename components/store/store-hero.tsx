@@ -76,9 +76,9 @@ export function StoreHero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="max-w-lg text-xl leading-relaxed text-[#5c4b32] md:text-2xl font-medium mx-auto lg:mx-0"
             >
-              Pensada y estructurada con mucho amor para acompañarlos. 
-              Aquí encontrarán herramientas prácticas y recursos creados 
-              especialmente para su crecimiento personal y bienestar emocional.
+              Pensada y estructurada con mucho amor para acompañarte. 
+              Aquí encontrarás herramientas prácticas y recursos creados 
+              especialmente para tu crecimiento personal y bienestar emocional.
             </motion.p>
 
             <motion.div 

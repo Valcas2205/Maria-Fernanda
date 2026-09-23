@@ -81,7 +81,7 @@ export function BookPromo() {
                     <BookOpen size={18} className="text-[#A7895C]" />
                   </div>
                   <span className="text-sm font-bold uppercase tracking-widest text-[#A7895C]">
-                    Pack de Fichas
+                    Herramienta de autoconocimiento
                   </span>
                 </div>
 
@@ -124,7 +124,7 @@ export function BookPromo() {
                       $25.99
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#A7895C] px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 group-hover:gap-3 group-hover:bg-[#A7895C]/90">
-                      Ver fichas
+                      Ver herramienta
                       <ArrowRight size={14} />
                     </span>
                   </div>
