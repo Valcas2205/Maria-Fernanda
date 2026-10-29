@@ -28,10 +28,10 @@ export const products: Product[] = [
     longDescription: `✨Herramienta pensada para quienes están buscando un proceso profundo de autoconocimiento y amor propio.\nEsta herramienta busca, mediante temas específicos, que conectes nuevamente con tu valor y amor propio.\nEsto incluye autoconocimiento, introspección, reflexión, ejercicios prácticos, mejorar la autoconfianza, aprender nuevas habilidades.\n\nLo que encontrarás aquí será información clave y necesaria para poder relacionarnos de manera sana con nosotros mismos.\n\n🤎¿Para quién es?\n- Para quienes deseen explorarse y conocerse a si mismos.\n- Para quienes han pasado situaciones dolorosas que han perjudicado su autoestima, para reconectar nuevamente con su valor.\n- Para quienes se han sentido últimamente desmotivados y notan que han descuidado la relación con ellos mismos.\n- Para los que deseen aprender las habilidades necesarias para mejorar sus vidas en sus distintas áreas (personal, profesional, social, familiar, amorosa y espiritual.\n\n💌Un recurso flexible\nNo necesitas seguir un orden ni completarla por completo. Puedes leerla cuando lo necesites y desees.\nAquí encontrarás temas interesantes. La recomendación de la psicóloga es a no conformarse con esto, te invita a seguir explorando tu mundo emocional, seguir fortaleciendo la relación contigo mismx, a seguir explorando información valiosa con respecto al tema, ya que la psicoeducación es necesaria para construir esas bases sólidas en la relación con nosotros mismos.\nEsta es una compañía emocional, intencional y amorosa, diseñada para mostrarte la importancia que tiene la relación que tenemos con nosotros mismos en nuestro bienestar emocional.`,
     price: 25.99,
     images: [
-      '/images/pack-fichas-3.png',
-      '/images/pack-fichas-1.png',
-      '/images/pack-fichas-2.png',
-      '/images/pack-fichas-4.png',
+      '/images/productofisico01.jpeg',
+      '/images/productofisico02.PNG',
+      '/images/productofisico03.PNG',
+      '/images/productofisico04.PNG',
     ],
     features: [
       'Conocerte a profundidad',
