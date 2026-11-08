@@ -45,6 +45,9 @@ const PAGO_MOVIL_PHONE = '04245414804'; // 0424-5414804
 const ZELLE_PAYPAL_EMAIL = 'mafeazcunes@gmail.com';
 const ZELLE_PAYPAL_NAME = 'Maria Azcunes';
 
+// Costo fijo de envío a EE. UU. para productos físicos (USD)
+const USA_SHIPPING_COST_USD = 7;
+
 type PaymentCopyLine = { id: string; display: string; copyValue: string };
 
 const formatMontoBsForCopy = (amountBs: number): string =>
@@ -289,6 +292,10 @@ export function CheckoutClient() {
     docNumber: '',
   });
 
+  const shippingCost =
+    hasPhysical && form.shippingRegion === 'internacional' ? USA_SHIPPING_COST_USD : 0;
+  const orderTotal = total + shippingCost;
+
   const isDocNumberRequired =
     form.paymentMethod !== 'zelle' && form.paymentMethod !== 'paypal';
 
@@ -423,7 +430,7 @@ export function CheckoutClient() {
         subscriptionId: 'cart',
         timePeriod: 'one-time',
         surface: 'cart',
-        amountUsd: total,
+        amountUsd: orderTotal,
       });
 
       const location = [form.address, form.city, form.state, form.country]
@@ -452,6 +459,8 @@ export function CheckoutClient() {
           quantity: i.quantity,
         })),
         deliveryType: form.deliveryType,
+        shippingRegion: form.shippingRegion,
+        shippingCost,
         agency: form.agency,
         paymentReference: form.paymentReference,
         senderId: `${form.docType}${form.docNumber}`,
@@ -462,10 +471,10 @@ export function CheckoutClient() {
       const { status, paymentId } = await submitCheckoutPaymentAction(token, {
         customerId,
         method: paymentMethod,
-        amountUsd: total,
+        amountUsd: orderTotal,
         amountVes:
           bcvRate && paymentMethod === 'pagomovil'
-            ? total * bcvRate
+            ? orderTotal * bcvRate
             : undefined,
         metadata,
         status: finalStatus,
@@ -491,7 +500,7 @@ export function CheckoutClient() {
     }
   }
 
-  const paymentLines = getPaymentLines(form.paymentMethod, total, bcvRate);
+  const paymentLines = getPaymentLines(form.paymentMethod, orderTotal, bcvRate);
 
   if (items.length === 0) {
     return (
@@ -877,7 +886,7 @@ export function CheckoutClient() {
                       </div>
                       <p className="mt-5 flex items-center gap-2 rounded-xl bg-[#A7895C]/10 px-4 py-3 text-xs text-[#5c4b32]">
                         <span>✈️</span>
-                        Los envíos a Estados Unidos se coordinan por WhatsApp. Te contactaremos para confirmar el costo y la agencia de envío.
+                        El envío a Estados Unidos tiene un costo fijo de ${USA_SHIPPING_COST_USD.toFixed(2)} USD, que se sumará al total de tu pedido. Te contactaremos por WhatsApp para coordinar la entrega.
                       </p>
                     </>
                   )}
@@ -1181,18 +1190,30 @@ export function CheckoutClient() {
                 </div>
 
                 <div className="border-t border-border/50 pt-4 mb-6">
+                  {shippingCost > 0 && (
+                    <div className="mb-3 flex flex-col gap-1 text-sm text-[#5c4b32]">
+                      <div className="flex justify-between">
+                        <span>Subtotal</span>
+                        <span>${total.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Envío a EE. UU.</span>
+                        <span>${shippingCost.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex justify-between items-baseline">
                     <span className="font-semibold text-[#5c4b32]">Total</span>
                     <div className="flex flex-col items-end">
                       <div className="flex items-baseline gap-1">
                         <span className="font-serif text-3xl lg:text-4xl font-bold text-[#A7895C]">
-                          ${total.toFixed(2)}
+                          ${orderTotal.toFixed(2)}
                         </span>
                         <span className="text-xs lg:text-sm text-[#5c4b32]/50">USD</span>
                       </div>
                       {form.paymentMethod === 'pago_movil' && bcvRate && (
                         <div className="text-base lg:text-lg font-semibold text-secondary mt-1 animate-in fade-in zoom-in-95 duration-300">
-                          {(total * bcvRate).toLocaleString('es-VE', {
+                          {(orderTotal * bcvRate).toLocaleString('es-VE', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}{' '}
