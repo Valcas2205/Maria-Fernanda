@@ -4,12 +4,12 @@ import { GraduationCap, Award, BookOpen } from "lucide-react"
 const credentials = [
   {
     icon: GraduationCap,
-    title: "Licenciada en Psicologia",
+    title: "Licenciada en Psicología",
     year: "Universidad Yacambú, 2022.",
   },
   {
     icon: Award,
-    title: "Master en Psicologia Clinica y de la Salud",
+    title: "Máster en Psicología Clínica y de la Salud",
     subtitle: "ISEP, España. 2024.",
   },
   {
@@ -29,7 +29,7 @@ export function About() {
             <div className="h-[400px] w-full overflow-hidden rounded-[2rem] md:h-full">
               <Image
                 src="/images/IMG_2590 (1).jpg"
-                alt="Maria Fernanda Azcunes con sus titulos profesionales"
+                alt="María Fernanda Azcunes con sus títulos profesionales"
                 width={600}
                 height={800}
                 className="h-full w-full object-cover object-center"
@@ -40,14 +40,14 @@ export function About() {
           {/* Text + Credentials - right column */}
           <div className="flex flex-1 flex-col gap-6">
             <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
-              Psic. Maria Fernanda Azcunes
+              Psic. María Fernanda Azcunes
             </h2>
             <div className="flex flex-col gap-4">
               <p className="text-lg leading-relaxed text-foreground/80">
                 Todo es un balance comenzó en el 2020 durante pandemia, mientras cursaba la universidad, como un
 blog psicoeducativo. Lo que inició como una manera de compartir conocimientos se transformó en
 algo mucho más profundo:{" "}
-                <span className="font-serif italic text-accent">mi proposito de vida</span>.
+                <span className="font-serif italic text-accent">mi propósito de vida</span>.
               </p>
               <p className="text-lg leading-relaxed text-foreground/80">
                 Hoy, <span className="font-serif italic text-[#a7896c]">todo es un balance</span>{" "}
@@ -56,7 +56,7 @@ la relación con ellos mismos, a amarse, descubrir su propósito de vida, mejora
 interpersonales y a encontrar ese equilibrio y estabilidad mental y emocional que todos buscamos.
               </p>
               <p className="text-lg leading-relaxed text-foreground/80">
-                Creo profundamente en que la terapia es un acto de amor propio. Para mi es un placer poder
+                Creo profundamente en que la terapia es un acto de amor propio. Para mí es un placer poder
 acompañar a cada uno de mis pacientes en su viaje al bienestar.
               </p>
             </div>

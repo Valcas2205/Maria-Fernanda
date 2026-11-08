@@ -56,7 +56,7 @@ export function Hero() {
               <div className="relative z-10 w-full flex justify-center">
                 <Image
                   src="/images/MagicEraser_250917_165551.PNG"
-                  alt="Maria Fernanda Azcunes, psicologa"
+                  alt="María Fernanda Azcunes, psicóloga"
                   width={420}
                   height={520}
                   className="h-auto w-[280px] object-contain drop-shadow-2xl"
@@ -84,7 +84,7 @@ export function Hero() {
               href="#sobre-mi"
               className="w-full sm:w-auto rounded-full border-2 border-[#A7895C] px-10 py-4 text-lg sm:text-base font-semibold text-[#A7895C] transition-colors hover:bg-[#A7895C]/10 text-center"
             >
-              Conoce mas
+              Conoce más
             </Link>
           </motion.div>
         </div>
@@ -100,7 +100,7 @@ export function Hero() {
             <div className="relative z-10">
               <Image
                 src="/images/MagicEraser_250917_165551.PNG"
-                alt="Maria Fernanda Azcunes, psicologa"
+                alt="María Fernanda Azcunes, psicóloga"
                 width={480}
                 height={600}
                 className="h-auto w-[320px] lg:w-[420px] object-contain drop-shadow-2xl"

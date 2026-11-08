@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 const testimonials = [
   {
     quote:
-      "Estar en terapia contigo ha sido un regalo de la vida, en cada consulta descubro un poco más de mí mientras me acompañas en el proceso del amor propio y el cómo manejar mi ansiedad, me enseñaste que todos las emociones son válidas y en lo bonito que es pasar tiempo consigo mismo. Con tu apoyo y las herramientas que me regalas en cada consulta, se que cada día es una bendición. Gracias Mafe.",
+      "Estar en terapia contigo ha sido un regalo de la vida, en cada consulta descubro un poco más de mí mientras me acompañas en el proceso del amor propio y el cómo manejar mi ansiedad, me enseñaste que todos las emociones son válidas y en lo bonito que es pasar tiempo consigo mismo. Con tu apoyo y las herramientas que me regalas en cada consulta, sé que cada día es una bendición. Gracias Mafe.",
     author: "M.R.",
     dotColor: "bg-[#b8d4e3]",
     blobColor: "bg-[#b8d4e3]/20",
@@ -14,7 +14,7 @@ const testimonials = [
   },
   {
     quote:
-      "La terapia con Mafe para mi tuvo un antes y un después en mi vida, empecé en un momento muy bajo y desde ahí todo fue maravilloso. Mafe es demasiado tranquila, empática y por más que sea una psicóloga termina siendo una amiga y de las mejores, trabajar mis problemas y pensamientos con mafe es más fácil de lo que en algún momento fue. Creo que todo el mundo necesita tener un lugar seguro como lo es el consultorio de mafe y una persona especial como lo es ella❤️.",
+      "La terapia con Mafe para mí tuvo un antes y un después en mi vida, empecé en un momento muy bajo y desde ahí todo fue maravilloso. Mafe es demasiado tranquila, empática y por más que sea una psicóloga termina siendo una amiga y de las mejores, trabajar mis problemas y pensamientos con Mafe es más fácil de lo que en algún momento fue. Creo que todo el mundo necesita tener un lugar seguro como lo es el consultorio de Mafe y una persona especial como lo es ella❤️.",
     author: "E.B.H.",
     dotColor: "bg-primary/60",
     blobColor: "bg-primary/15",
@@ -22,7 +22,7 @@ const testimonials = [
   },
   {
     quote:
-      "La terapia contigo doc ha sido un subí y baja de emociones, pero sobre todo me ha ayudado a sobrellevar esas situaciones donde me sentia perdida y sola, conseguí mi lugar seguro donde puedo expresarme y sentir todas las emociones que me invaden❤️.",
+      "La terapia contigo doc ha sido un subí y baja de emociones, pero sobre todo me ha ayudado a sobrellevar esas situaciones donde me sentía perdida y sola, conseguí mi lugar seguro donde puedo expresarme y sentir todas las emociones que me invaden❤️.",
     author: "A.A.",
     dotColor: "bg-secondary/70",
     blobColor: "bg-secondary/15",
@@ -164,7 +164,7 @@ export function Testimonials() {
                     ? "w-6 bg-primary"
                     : "w-2 bg-primary/25 hover:bg-primary/40"
                 }`}
-                aria-label={`Ir a pagina ${i + 1}`}
+                aria-label={`Ir a página ${i + 1}`}
               />
             ))}
           </div>

@@ -10,6 +10,7 @@ import { Testimonials } from "@/components/testimonials"
 import { Pricing } from "@/components/pricing"
 import { FAQ } from "@/components/faq"
 import { CTA } from "@/components/cta"
+import { BookPromo } from "@/components/book-promo"
 import { Footer } from "@/components/footer"
 
 export default function Page() {
@@ -23,6 +24,7 @@ export default function Page() {
         <Identification />
         <About />
         <Areas />
+        <BookPromo />
         <EmergencyKit />
         <Testimonials />
         <Pricing />
